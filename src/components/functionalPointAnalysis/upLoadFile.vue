@@ -55,6 +55,8 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus";
 import { RouterLink,useRouter } from "vue-router";
 import axios from 'axios';
+import { onMounted, ref, reactive } from "vue";
+
 import { useSystemStore } from '@/stores/systemStore';
 
 const router = useRouter();
@@ -81,18 +83,17 @@ const reload = () => {
 }
 
 //同时还要add一个gsc表 传一个sysId
-const viewFP = () => {
-  // 异步函数从后端获取 systemID
+const viewFP = async () => {
   try {
-    const response = await axios.get('/api/system-id'); // 替换为你的 API 地址
+    const response = await axios.get('https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/FP/list'); 
     systemStore.setSystemID(response.data.systemID); // 假设返回 JSON 格式 { systemID: "12345" }
   } catch (error) {
     console.error('获取 System ID 失败:', error);
   }
 
   router.push("/index/viewFP");
-  
 }
+
 
 // 上传成功回调
 const handleUploadSuccess = (response: any, file: any) => {

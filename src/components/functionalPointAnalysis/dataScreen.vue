@@ -144,8 +144,9 @@ import { useSystemStore } from '@/stores/systemStore';
 
 const dialogTable1Visible = ref(false);
 const dialogTable2Visible = ref(false)
+const systemStore = useSystemStore();
 
-
+console.log(systemStore.systemID);
 // 明确指定 gscTableData 的类型
 const gscTableData = ref<{
   GSC: string;
