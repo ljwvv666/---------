@@ -140,6 +140,7 @@ import type { TableColumnCtx } from 'element-plus'
 import { onMounted, ref, reactive } from "vue";
 import PieChart from "@/components/functionalPointAnalysis/PieChart.vue";
 import axios from 'axios';
+import { useSystemStore } from '@/stores/systemStore';
 
 const dialogTable1Visible = ref(false);
 const dialogTable2Visible = ref(false)
@@ -161,8 +162,8 @@ const gscTableData = ref<{
 //获取gsc数据
 const fetchData = async () => {
   try {
-    // http://localhost:8088/gsc/get?gscID=2
-    const response = await axios.get("https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/gsc/get?gscID=2");
+    // http://localhost:8088/gsc/get?gscID=${systemStore.systemID}
+    const response = await axios.get("https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/gsc/get?gscID=${systemStore.systemID}");
     const rawData = response.data;
 
     // 定义你的 GSC 映射

@@ -55,14 +55,41 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus";
 import { RouterLink,useRouter } from "vue-router";
 import axios from 'axios';
+import { useSystemStore } from '@/stores/systemStore';
 
 const router = useRouter();
+
+// 使用 Pinia Store
+const systemStore = useSystemStore();
+
+// 定义一个响应式变量，用于输入框绑定
+const newSystemID = ref<string>('');
+
+// 更新 systemID 的方法
+const updateSystemID = () => {
+  systemStore.setSystemID(newSystemID.value);
+};
+
+// 清空 systemID 的方法
+const clearSystemID = () => {
+  systemStore.clearSystemID();
+};
+
+
 const reload = () => {
 
 }
 
 //同时还要add一个gsc表 传一个sysId
 const viewFP = () => {
+  // 异步函数从后端获取 systemID
+  try {
+    const response = await axios.get('/api/system-id'); // 替换为你的 API 地址
+    systemStore.setSystemID(response.data.systemID); // 假设返回 JSON 格式 { systemID: "12345" }
+  } catch (error) {
+    console.error('获取 System ID 失败:', error);
+  }
+
   router.push("/index/viewFP");
   
 }
