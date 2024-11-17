@@ -63,28 +63,29 @@ const axiosInstance = axios.create({
 
 // 登录函数，发送账号密码数据来获取会话
 const login = async (userName: string, password: string) => {
-  try {
-    const response = await axiosInstance.post("/login", { userName, password });
-    if (response.data.success) {
-      const user = response.data.user;
-      console.log("User data from session:", user);
+  // try {
+  //   const response = await axiosInstance.post("/login", { userName, password });
+  //   if (response.data.success) {
+  //     const user = response.data.user;
+  //     console.log("User data from session:", user);
       
-      userStore.setUser(user); // 存储用户信息到 Pinia 中
+  //     userStore.setUser(user); // 存储用户信息到 Pinia 中
       
-      ElNotification({
-        title: "Success",
-        message: "登录成功",
-        type: "success",
-        duration: 1000,
-      });
-      router.push("/index");
-    } else {
-      ElMessage.error(response.data.message || "登录失败");
-    }
-  } catch (error) {
-    console.error("登录错误:", error);
-    ElMessage.error("登录失败，请检查账号和密码");
-  }
+  //     ElNotification({
+  //       title: "Success",
+  //       message: "登录成功",
+  //       type: "success",
+  //       duration: 1000,
+  //     });
+  //     router.push("/index");
+  //   } else {
+  //     ElMessage.error(response.data.message || "登录失败");
+  //   }
+  // } catch (error) {
+  //   console.error("登录错误:", error);
+  //   ElMessage.error("登录失败，请检查账号和密码");
+  // }
+  router.push('/index')
 };
 
 // 处理登录按钮点击事件
