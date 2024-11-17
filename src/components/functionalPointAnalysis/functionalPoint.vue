@@ -1,5 +1,5 @@
 <template>
-  <div id="department-manage">
+  <div id="show_FP">
 
     <!-- 对所有信息的展示 -->
     <div id="allInfo" v-show="isShow == 1">
@@ -94,7 +94,6 @@ import { useUfpStore } from "@/stores/ufpClass";
 const ufpStore = useUfpStore();
 
 const userStore = useUserStore(); // 获取 userStore 实例
-const ufn = ref('');
 
 // 复杂度候选项
 const complexityOptions = ['低', '中', '高'];
@@ -135,29 +134,29 @@ const dialogFormVisible = ref(false);
 const dialogFormVisible1 = ref(false);
 const dialogFormVisible2 = ref(false);
 
-interface Department {
-  pid: string;
-  id: string;
-  subSystem: string;
-  module: string; // 可以根据实际情况定义更精确的类型
-  FPN: string;
-  FPD: string;
-  type: string;
-  complexity: string;
-  UFP: string;
-}
+// interface Department {
+//   pid: string;
+//   id: string;
+//   subSystem: string;
+//   module: string; // 可以根据实际情况定义更精确的类型
+//   FPN: string;
+//   FPD: string;
+//   type: string;
+//   complexity: string;
+//   UFP: string;
+// }
 
-const department = reactive<Department>({
-  pid: "",
-  id: "",
-  subSystem: "",
-  module: "",
-  FPN: "",
-  FPD: "",
-  type: "",
-  complexity: "",
-  UFP: ""
-});
+// const department = reactive<Department>({
+//   pid: "",
+//   id: "",
+//   subSystem: "",
+//   module: "",
+//   FPN: "",
+//   FPD: "",
+//   type: "",
+//   complexity: "",
+//   UFP: ""
+// });
 
 const isShow = ref(1);
 
