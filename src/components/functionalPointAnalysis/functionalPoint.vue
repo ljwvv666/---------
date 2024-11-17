@@ -12,19 +12,24 @@
       >
         <el-table-column width="70" label="序号" >
           <template #default="scope">
-          <!-- 只显示第一个子系统的序号 -->
-            <span v-if="scope.row.isFirstInSubSystem">{{ scope.row.index }}</span>
+            <!-- 判断如果当前行和前一行的子系统名称相同，则不显示 -->
+            <span >{{ scope.row.index }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="子系统" width="150">
+        <el-table-column label="子系统" width="110">
           <template #default="scope">
             <!-- 判断如果当前行和前一行的子系统名称相同，则不显示 -->
             <span v-if="scope.row.isFirstInSubSystem">{{ scope.row.subSystem }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="module" label="模块" width="150"></el-table-column>
+        <el-table-column label="模块" width="110">
+          <template #default="scope">
+            <!-- 判断如果当前行和前一行的模块名称相同，则不显示 -->
+            <span v-if="scope.row.isFirstInModule">{{ scope.row.module }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="fpn" label="功能点名称" width="150"></el-table-column>
-        <el-table-column prop="fpd" label="功能点描述" width="250"></el-table-column>
+        <el-table-column prop="fpd" label="功能点描述" width="300"></el-table-column>
         <el-table-column prop="type" label="功能类型" width="100">
           <template #default="scope">
             <el-select
@@ -182,21 +187,28 @@ const fetchTableData = async () => {
 
     let sequenceNumber = 0; // 序号初始化
     let previousSubSystem = ''; // 上一个子系统名称
+    let previousModule = '';
     tableData.value = data.map((item, index) => {
+      sequenceNumber++; // 更新序号
       // 如果当前子系统名称与上一个子系统名称不同，重新设置序号
       const isFirstInSubSystem = item.subSystem !== previousSubSystem;
       if (isFirstInSubSystem) {
         previousSubSystem = item.subSystem;
-        sequenceNumber++; // 更新序号
       }
 
+      const isFirstInModule = item.module !== previousModule;
+      if(isFirstInModule){
+        previousModule = item.module;
+      }
       return {
         ...item,
         index: sequenceNumber, // 添加序号
         isFirstInSubSystem, // 是否为该子系统名称的第一次出现
+        isFirstInModule,
       };
     });
 
+    console.log(tableData.value);
   } catch (error) {
     console.error('Failed to fetch table data:', error);
   }
