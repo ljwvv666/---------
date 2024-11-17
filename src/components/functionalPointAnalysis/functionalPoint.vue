@@ -8,7 +8,6 @@
         row-key="id"
         border
         show-summary
-        :default-expand-all="isOpen"
         ref="allInfoRef"
       >
         <el-table-column width="70" label="序号" >
@@ -38,6 +37,7 @@
                 :key="item"
                 :label="item"
                 :value="item"
+                @click="updateFTOrComplexity(scope.row)"
               ></el-option>
             </el-select>
           </template>
@@ -51,9 +51,10 @@
             >
               <el-option
                 v-for="item in complexityOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key="item"
+                :label="item"
+                :value="item"
+                @click="updateFTOrComplexity(scope.row)"
               ></el-option>
             </el-select>
           </template>
@@ -61,12 +62,11 @@
         <el-table-column prop="ufp" label="UFP" width="70"></el-table-column>
 
         <el-table-column label="操作">
-          <template #default="{ row }">
+          <template #default="scope">
             <el-link
-              v-if="row.id !== 1"
               icon="Delete"
               type="primary"
-              @click.prevent="deleteDtm(row.id)"
+              @click.prevent="deleteDtm(scope.row.fpn)"
               >删除</el-link
             >
           </template>
@@ -87,102 +87,49 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 import { List, Menu, Platform, Right, Setting } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules, StepInstance } from "element-plus";
-import { ElMessage } from "element-plus";
+import { ElMessage,ElMessageBox } from "element-plus";
 import { useUserStore } from '@/stores/userStore'; // 导入 userStore
 import { useUfpStore } from "@/stores/ufpClass";
 
 const ufpStore = useUfpStore();
 
 const userStore = useUserStore(); // 获取 userStore 实例
-
+const ufn = ref('');
 
 // 复杂度候选项
-const complexityOptions = [
-  { value: 'low', label: '低' },
-  { value: 'medium', label: '中' },
-  { value: 'high', label: '高' },
-];
+const complexityOptions = ['低', '中', '高'];
+
 // 功能类型候选项
 const functionTypeOptions = ['EI', 'EO', 'EQ', 'ILF', 'EIF'];
 
-// 更新复杂度
-const updateComplexity = async (row) => {
+
+// 更新复杂度和功能类型的方法
+const updateFTOrComplexity = async (row) => {
   try {
-    const response = await axios.post('https://your-backend-api/update-complexity', {
-      id: row.id,
-      dtmComp: row.dtmComp, // 新的复杂度值
+    const res = await axios.post('https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/func/update', {
+      systemID: row.systemID,
+      subSystem: row.subSystem,
+      module: row.module,
+      type: row.type,
+      complexity: row.complexity,
+      fpd: row.fpd,
+      ufp: row.ufp,
+      fpn: row.fpn
     });
-    console.log('更新成功:', response.data);
+
+    fetchTableData();
+
+    // 更新成功后的提示
+    ElMessage({
+      message: res.data.msg,
+      type: "success",
+    });
   } catch (error) {
     console.error('更新失败:', error);
   }
 };
 
-// 更新功能类型的方法
-const updateFunctionType = async (row) => {
-  try {
-    await axios.post('https://your-backend-api/update-function-type', {
-      id: row.id,
-      dtmFT: row.dtmFT,
-    });
-    console.log('功能类型更新成功');
-  } catch (error) {
-    console.error('功能类型更新失败:', error);
-  }
-};
 
-//表单验证规则
-const departmentRules = reactive({
-  pid: [
-    {
-      required: true,
-      message: "上级功能点不能为空",
-      trigger: "blur",
-    },
-  ],
-  subSystem: [
-    {
-      required: true,
-      message: "子系统不能为空",
-      trigger: "blur",
-    },
-  ],
-  module: [
-    {
-      required: true,
-      message: "模块不能为空",
-      trigger: "blur",
-    },
-  ],
-  FPN: [
-    {
-      required: true,
-      message: "功能点名称不能为空",
-      trigger: "blur",
-    },
-  ],
-  FPD: [
-    {
-      required: true,
-      message: "功能点描述不能为空",
-      trigger: "blur",
-    },
-  ],
-  type: [
-    {
-      required: true,
-      message: "类型不能为空",
-      trigger: "blur",
-    },
-  ],
-  complexity: [
-    {
-      required: true,
-      message: "复杂度不能为空",
-      trigger: "blur",
-    },
-  ],
-});
 
 const dialogFormVisible = ref(false);
 const dialogFormVisible1 = ref(false);
@@ -233,6 +180,7 @@ const fetchTableData = async () => {
       if(type == "EIF"){ ufpStore.EIF++;}
     });
 
+
     let sequenceNumber = 0; // 序号初始化
     let previousSubSystem = ''; // 上一个子系统名称
     tableData.value = data.map((item, index) => {
@@ -255,34 +203,44 @@ const fetchTableData = async () => {
   }
 };
 
-let tableData2 = ref([]);
-let list = ref([]);
 
-
-
-function openDialogAdd(id) {
-  dialogFormVisible.value = true;
-}
-
-
-function deleteDtm(id: number) {
-  if (!confirm("是否删除")) {
-    return;
-  }
-  axios
-    .get("/api/index/delete", {
-      params: {
-        id,
-      },
-    })
-    .then((res) => {
-      ElMessage({
-        message: res.data.msg,
-        type: "success",
-      });
-      showList();
+async function deleteDtm(fpn: string) {
+  try {
+    // 弹出确认框
+    await ElMessageBox.confirm("确认删除该功能点？", "警告", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
     });
+
+    // 调用后端接口删除功能点
+    const res = await axios.delete("https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/func/delete", {
+      params: {
+        fpn,
+      },
+    });
+
+    // 刷新表格数据
+    fetchTableData();
+    
+    // 删除成功后的提示
+    ElMessage({
+      message: res.data.msg,
+      type: "success",
+    });
+
+  } catch (error) {
+    // 捕获用户取消或者接口错误
+    console.error("Error deleting function point:", error);
+
+    // 如果需要，可以显示一条错误消息
+    ElMessage({
+      message: "删除失败或操作已取消",
+      type: "error",
+    });
+  }
 }
+
 
 const isOpen = ref(true);
 const allInfoRef = ref(null);
