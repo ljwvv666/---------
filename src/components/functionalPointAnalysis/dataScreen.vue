@@ -5,7 +5,7 @@
       <el-col :span="8">
         <div class="statistic-card">
           <!-- gscTableData[0]?.ufp || 0 -->
-          <el-statistic :value=75000>
+          <el-statistic :value=ufpStore.total>
             <template #title>
               <div style="display: inline-flex; align-items: center">
                 未调整功能点数
