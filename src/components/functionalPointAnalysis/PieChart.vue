@@ -5,6 +5,9 @@
   <script setup lang="ts">
   import * as echarts from "echarts";
   import { onMounted, ref } from "vue";
+  import { useUfpStore } from "@/stores/ufpClass";
+
+  const ufpStore = useUfpStore();
   
   // 引用图表 DOM
   const chartRef = ref<HTMLDivElement | null>(null);
@@ -30,11 +33,11 @@
             type: "pie",
             radius: "50%",
             data: [
-              { value: 1048, name: "搜索引擎" },
-              { value: 735, name: "直接访问" },
-              { value: 580, name: "邮件营销" },
-              { value: 484, name: "联盟广告" },
-              { value: 300, name: "视频广告" },
+              { value: ufpStore.EO, name: "EO" },
+              { value: ufpStore.EI, name: "EI" },
+              { value: ufpStore.EQ, name: "EQ" },
+              { value: ufpStore.ILF, name: "ILF" },
+              { value: ufpStore.EIF, name: "EIF" },
             ],
             emphasis: {
               itemStyle: {
