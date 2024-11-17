@@ -1,113 +1,37 @@
 <template>
   <div id="department-manage">
-    <!-- 上面两个按钮（新增和折叠/展开） -->
-    <el-row style="padding-bottom: 15px" gutter="20">
-      <el-col span="3" offset="3">
-        <el-button
-          type="primary"
-          plain
-          icon="Plus"
-          @click.prevent="openDialogAdd(1)"
-          >新增</el-button
-        >
-      </el-col>
-      <el-col span="3" offset="6">
-        <el-button type="info" plain @click.prevent="foldOropen()"
-          ><el-icon><Switch /></el-icon>折叠/展开</el-button
-        >
-      </el-col>
-    </el-row>
 
-    <el-dialog title="添加功能点"
-      v-model="dialogFormVisible"
-      width="40%"
-      v-if="dialogFormVisible"
-    >
-      <el-form
-        :label-position="Right"
-        :model="department"
-        :rules="departmentRules"
-        ref="newdtmFrom"
-        label-width="20%"
-        status-icon
-      >
-        <el-form-item label="上级" prop="pid">
-          <el-select
-            v-model="department.pid"
-            clearable
-            placeholder="选择上级功能点/模块/子系统"
-          >
-            <el-option
-              v-for="item in tableData"
-              :key="item.id"
-              :label="item.FPN"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="功能点名称" prop="FPN">
-          <el-input v-model="department.FPN" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="功能点描述" prop="FPD">
-          <el-input v-model="department.FPD" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="功能点类型" prop="type">
-          <el-select
-              v-model="department.type"
-              placeholder="请选择功能类型"
-              style="width: 50%"
-            >
-              <el-option
-                v-for="item in functionTypeOptions"
-                :key="item"
-                :label="item"
-                :value="item"
-              ></el-option>
-            </el-select>
-        </el-form-item>
-        <el-form-item label="复杂度" prop="complexity">
-          <el-select
-              v-model="department.complexity"
-              placeholder="请选择复杂度"
-              style="width: 50%"
-            >
-              <el-option
-                v-for="item in complexityOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addDtm">确 定</el-button>
-      </div>
-    </el-dialog>
     <!-- 对所有信息的展示 -->
     <div id="allInfo" v-show="isShow == 1">
       <el-table
-        :data="tableData1"
+        :data="tableData"
         row-key="id"
         border
+        show-summary
         :default-expand-all="isOpen"
         ref="allInfoRef"
       >
-        <el-table-column prop="id" width="80" label="序号"></el-table-column>
-        <el-table-column prop="subSystem" label="子系统" width="150"></el-table-column>
+        <el-table-column width="70" label="序号" >
+          <template #default="scope">
+          <!-- 只显示第一个子系统的序号 -->
+            <span v-if="scope.row.isFirstInSubSystem">{{ scope.row.index }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="子系统" width="150">
+          <template #default="scope">
+            <!-- 判断如果当前行和前一行的子系统名称相同，则不显示 -->
+            <span v-if="scope.row.isFirstInSubSystem">{{ scope.row.subSystem }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="module" label="模块" width="150"></el-table-column>
-        <el-table-column prop="FPN" label="功能点名称" width="150"></el-table-column>
-        <el-table-column prop="FPD" label="功能点描述" width="200"></el-table-column>
-
+        <el-table-column prop="fpn" label="功能点名称" width="150"></el-table-column>
+        <el-table-column prop="fpd" label="功能点描述" width="250"></el-table-column>
         <el-table-column prop="type" label="功能类型" width="100">
           <template #default="scope">
             <el-select
               v-model="scope.row.type"
               placeholder="请选择功能类型"
               style="width: 100%"
-              @change="updateFunctionType(scope.row)"
             >
               <el-option
                 v-for="item in functionTypeOptions"
@@ -118,14 +42,12 @@
             </el-select>
           </template>
         </el-table-column>
-
         <el-table-column prop="complexity" label="复杂度" width="100">
           <template #default="scope">
             <el-select
               v-model="scope.row.complexity"
               placeholder="请选择复杂度"
               style="width: 100%"
-              @change="updateComplexity(scope.row)"
             >
               <el-option
                 v-for="item in complexityOptions"
@@ -136,17 +58,10 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="UFP" label="UFP" width="100"></el-table-column>
+        <el-table-column prop="ufp" label="UFP" width="70"></el-table-column>
 
         <el-table-column label="操作">
           <template #default="{ row }">
-            <el-link
-              icon="Plus"
-              v-if="row.id !== 1"
-              type="primary"
-              @click.prevent="openDialogAdd(row.id)"
-              >新增</el-link
-            >
             <el-link
               v-if="row.id !== 1"
               icon="Delete"
@@ -299,22 +214,46 @@ const department = reactive<Department>({
 
 const isShow = ref(1);
 
-let tableData1 = ref([]);
+let tableData = ref([]);
 let departments = ref([]);
 let firm = ref();
 
-async function showList() {
+// 获取数据并处理
+const fetchTableData = async () => {
   try {
-    console.log(userStore.user.department1)
-    const response = await axios.get("/api/index/tree");
-    departments.value = response.data.klist;
-    tableData1.value = response.data.tlist;
-    firm.value = response.data.department;
-    console.info("Str", tableData1.value);
+    const response = await axios.get('https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/func/list'); // 替换为实际的接口地址
+    const data = response.data.info;
+    
+    data.forEach(item => {
+      const type = item.type
+      if(type == "EO"){ ufpStore.EO++;}
+      if(type == "EI"){ ufpStore.EI++;}
+      if(type == "EQ"){ ufpStore.EQ++;}
+      if(type == "ILF"){ ufpStore.ILF++;}
+      if(type == "EIF"){ ufpStore.EIF++;}
+    });
+
+    let sequenceNumber = 0; // 序号初始化
+    let previousSubSystem = ''; // 上一个子系统名称
+    tableData.value = data.map((item, index) => {
+      // 如果当前子系统名称与上一个子系统名称不同，重新设置序号
+      const isFirstInSubSystem = item.subSystem !== previousSubSystem;
+      if (isFirstInSubSystem) {
+        previousSubSystem = item.subSystem;
+        sequenceNumber++; // 更新序号
+      }
+
+      return {
+        ...item,
+        index: sequenceNumber, // 添加序号
+        isFirstInSubSystem, // 是否为该子系统名称的第一次出现
+      };
+    });
+
   } catch (error) {
-    console.error("Error:", Error);
+    console.error('Failed to fetch table data:', error);
   }
-}
+};
 
 let tableData2 = ref([]);
 let list = ref([]);
@@ -325,44 +264,6 @@ function openDialogAdd(id) {
   dialogFormVisible.value = true;
 }
 
-const newdtmFrom = ref(null);
-
-function addDtm() {
-  // 验证表单
-  newdtmFrom.value.validate((valid: any) => {
-    if (valid) {
-      let fd = new FormData();
-
-      // 将新的字段添加到 FormData 中
-      fd.append("pid", department.pid); // 上级功能点/模块/子系统
-      fd.append("FPN", department.FPN); // 功能点名称
-      fd.append("FPD", department.FPD); // 功能点描述
-      fd.append("type", department.type); // 功能点类型
-      fd.append("complexity", department.complexity); // 复杂度
-
-      // 发送 POST 请求
-      axios.post("/api/index/add", fd).then((res) => {
-        if (res.data.isOk) {
-          ElMessage({
-            message: res.data.msg,
-            type: "success",
-          });
-          dialogFormVisible.value = false; // 关闭对话框
-        } else {
-          ElMessage.error("新增失败，功能点名称已存在");
-          department.FPN = ""; // 清空功能点名称字段
-        }
-        showList(); // 更新表格或列表数据
-      });
-    } else {
-      ElMessage.error("请按要求输入");
-    }
-  });
-}
-
-
-
-const editdtmForm = ref(null);
 
 function deleteDtm(id: number) {
   if (!confirm("是否删除")) {
@@ -386,17 +287,9 @@ function deleteDtm(id: number) {
 const isOpen = ref(true);
 const allInfoRef = ref(null);
 
-function foldOropen() {
-  isOpen.value = !isOpen.value;
-  console.info("isOpen", isOpen.value);
-  console.info("REF", allInfoRef.value);
-  if (allInfoRef.value) {
-    console.info("W", "YES");
-  }
-}
 
 onMounted(() => {
-  showList();
+  fetchTableData(); // 调用函数获取数据
 });
 </script>
 
