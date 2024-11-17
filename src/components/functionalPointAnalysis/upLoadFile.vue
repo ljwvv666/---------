@@ -15,12 +15,17 @@
             <span>
                 2. 模板中的“功能描述”列的各行必填项，否则无法解析
             </span>
+            <el-divider></el-divider>
+            <span>
+                3. 由于您的身份是软件造价评估师，无权修改功能点文件内容，因此只能在此页面进行文件重传
+            </span>
     </el-card>
 
     <el-upload
+      ref="uploadRef"
       class="upload-demo"
       drag
-      action="http://your-backend-endpoint/upload"
+      action="https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/func/trans"
       :on-success="handleUploadSuccess"
       :on-error="handleUploadError"
       :before-upload="beforeUpload"
@@ -40,8 +45,9 @@
     </el-upload>
     <el-row :gutter="20">
       <el-col :span="18"><div class="grid-content ep-bg-purple" /></el-col>
-      <el-col :span="6"><div class="grid-content ep-bg-purple" />
-        <el-button type="primary" @click="reload">重新上传文件</el-button>
+      <el-col :span="6">
+        <div class="grid-content ep-bg-purple" />
+        <el-button type="primary" @click="reload">清空上传文件列表</el-button>
         <el-button type="primary" @click="viewFP">开始分析功能点</el-button>
       </el-col>
     </el-row>
@@ -64,23 +70,15 @@ const router = useRouter();
 // 使用 Pinia Store
 const systemStore = useSystemStore();
 
-// 定义一个响应式变量，用于输入框绑定
-const newSystemID = ref<string>('');
-
-// 更新 systemID 的方法
-const updateSystemID = () => {
-  systemStore.setSystemID(newSystemID.value);
-};
-
-// 清空 systemID 的方法
-const clearSystemID = () => {
-  systemStore.clearSystemID();
-};
-
+// 引用 el-upload
+const uploadRef = ref(null);
 
 const reload = () => {
-
-}
+  if (uploadRef.value) {
+    // 清空上传的文件队列
+    uploadRef.value.clearFiles();
+  }
+};
 
 //同时还要add一个gsc表 传一个sysId
 const viewFP = async () => {
@@ -130,8 +128,8 @@ const handleExceed = () => {
 
 // 下载模板文件
 const downloadFile = () => {
-  const fileUrl = 'evaluation.xlsx';
-  const fileName = 'template-file.xlsx';
+  const fileUrl = '/evaluation.xlsx';
+  const fileName = 'templateFile.xlsx';
 
   const link = document.createElement('a');
   link.href = fileUrl;

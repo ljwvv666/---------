@@ -14,6 +14,11 @@
         <!-- <RouterView name="aside"></RouterView> -->
       </el-aside>
       <el-main class="main">
+        <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+          <el-tab-pane label="上传文件" name="first"></el-tab-pane>
+          <el-tab-pane label="功能点明细" name="second"></el-tab-pane>
+          <el-tab-pane label="结果呈现" name="third"></el-tab-pane>
+        </el-tabs>
         <RouterView></RouterView>
       </el-main>
     </el-container>
@@ -21,11 +26,12 @@
 </template>
 
 <script setup lang="ts">
-    import {RouterView,RouterLink} from 'vue-router'
+import {RouterView,RouterLink} from 'vue-router'
 
-    import Menu from "./menu/index.vue";
-    import Header from "./header/index.vue"
-    import Main from "@/components/UserManagement.vue"
+import Menu from "./menu/index.vue";
+import Header from "./header/index.vue"
+import Main from "@/components/UserManagement.vue"
+// const tabPosition = ref<TabsInstance['tabPosition']>('left')
 </script>
 
 <style scoped>
@@ -67,4 +73,7 @@ html, body, .app-wrapper {
   padding: 20px;
   flex: 1;
 }
+
+
+
 </style>
