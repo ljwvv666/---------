@@ -14,11 +14,11 @@
         <!-- <RouterView name="aside"></RouterView> -->
       </el-aside>
       <el-main class="main">
-        <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+        <!-- <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
           <el-tab-pane label="上传文件" name="first"></el-tab-pane>
           <el-tab-pane label="功能点明细" name="second"></el-tab-pane>
           <el-tab-pane label="结果呈现" name="third"></el-tab-pane>
-        </el-tabs>
+        </el-tabs> -->
         <RouterView></RouterView>
       </el-main>
     </el-container>
