@@ -83,8 +83,8 @@ const reload = () => {
 //同时还要add一个gsc表 传一个sysId
 const viewFP = async () => {
   try {
-    const response = await axios.get('https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/FP/list'); 
-    systemStore.setSystemID(response.data.systemID); // 假设返回 JSON 格式 { systemID: "12345" }
+    const response = await axios.get('https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/func/list'); 
+    systemStore.setSystemID(response.data.info[0].systemID);
   } catch (error) {
     console.error('获取 System ID 失败:', error);
   }
