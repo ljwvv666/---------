@@ -1,5 +1,4 @@
 <template>
-
   <div id="department-manage">
     <!-- 上面两个按钮（新增和折叠/展开） -->
     <el-row style="padding-bottom: 15px" gutter="20">
@@ -90,7 +89,7 @@
     <!-- 对所有信息的展示 -->
     <div id="allInfo" v-show="isShow == 1">
       <el-table
-        :data="tableData"
+        :data="tableData1"
         row-key="id"
         border
         :default-expand-all="isOpen"
@@ -175,61 +174,11 @@ import { List, Menu, Platform, Right, Setting } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules, StepInstance } from "element-plus";
 import { ElMessage } from "element-plus";
 import { useUserStore } from '@/stores/userStore'; // 导入 userStore
+import { useUfpStore } from "@/stores/ufpClass";
+
+const ufpStore = useUfpStore();
 
 const userStore = useUserStore(); // 获取 userStore 实例
-
-const tableData = [
-  {
-    id: 1,
-    subSystem: "系统A",
-    module: "模块A1",
-    FPN: "功能点A1",
-    FPD: "功能点描述A1",
-    dtmFT: "EI",  // 默认值
-    dtmComp: "低", // 默认值
-    UFP: 10
-  },
-  {
-    id: 2,
-    subSystem: "系统B",
-    module: "模块B2",
-    FPN: "功能点B2",
-    FPD: "功能点描述B2",
-    dtmFT: "EO",  // 默认值
-    dtmComp: "中", // 默认值
-    UFP: 12
-  },
-  {
-    id: 3,
-    subSystem: "系统C",
-    module: "模块C3",
-    FPN: "功能点C3",
-    FPD: "功能点描述C3",
-    dtmFT: "EQ",  // 默认值
-    dtmComp: "高", // 默认值
-    UFP: 15
-  },
-  {
-    id: 4,
-    subSystem: "系统D",
-    module: "模块D4",
-    FPN: "功能点D4",
-    FPD: "功能点描述D4",
-    dtmFT: "ILF",  // 默认值
-    dtmComp: "低", // 默认值
-    UFP: 8
-  },
-  {
-    id: 5,
-    subSystem: "系统E",
-    module: "模块E5",
-    FPN: "功能点E5",
-    FPD: "功能点描述E5",
-    dtmFT: "EIF",  // 默认值
-    dtmComp: "中", // 默认值
-    UFP: 20
-  }
-];
 
 
 // 复杂度候选项

@@ -82,7 +82,7 @@
       <!-- 功能点表格 -->
       <el-table :data="tableData" border show-summary style="width: 30%;">
         <el-table-column prop="name" label="功能点类型" />
-        <el-table-column prop="amount1" sortable label="数量" />
+        <el-table-column prop="amount" sortable label="数量" />
       </el-table>
       <!-- 饼状图 -->
       <PieChart />
@@ -141,10 +141,12 @@ import { onMounted, ref, reactive } from "vue";
 import PieChart from "@/components/functionalPointAnalysis/PieChart.vue";
 import axios from 'axios';
 import { useSystemStore } from '@/stores/systemStore';
+import { useUfpStore } from "@/stores/ufpClass";
 
 const dialogTable1Visible = ref(false);
 const dialogTable2Visible = ref(false)
 const systemStore = useSystemStore();
+const ufpStore = useUfpStore();
 
 console.log(systemStore.systemID);
 // 明确指定 gscTableData 的类型
@@ -304,39 +306,24 @@ return sums
 
 const tableData: Product[] = [
 {
-    id: '12987122',
-    name: 'Tom',
-    amount1: '234',
-    amount2: '3.2',
-    amount3: 10,
+    name: 'EO',
+    amount: ufpStore.EO,
 },
 {
-    id: '12987123',
-    name: 'Tom',
-    amount1: '165',
-    amount2: '4.43',
-    amount3: 12,
+    name: 'EI',
+    amount: ufpStore.EI,
 },
 {
-    id: '12987124',
-    name: 'Tom',
-    amount1: '324',
-    amount2: '1.9',
-    amount3: 9,
+    name: 'EQ',
+    amount: ufpStore.EQ,
 },
 {
-    id: '12987125',
-    name: 'Tom',
-    amount1: '621',
-    amount2: '2.2',
-    amount3: 17,
+    name: 'ILF',
+    amount: ufpStore.ILF,
 },
 {
-    id: '12987126',
-    name: 'Tom',
-    amount1: '539',
-    amount2: '4.1',
-    amount3: 15,
+    name: 'EIF',
+    amount: ufpStore.EIF,
 },
 ]
 </script>
