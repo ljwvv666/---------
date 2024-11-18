@@ -318,11 +318,11 @@ const searchScaleByStandard = async (selectedName: string) => {
     systemStore.stageName = response.data.stage
     // 转换为表格所需的格式
     scaleTableData.value = [
-      { stage: "项目启动阶段", factor: data.stageProjectStart },
-      { stage: "项目投标阶段", factor: data.stageProjectBid },
+      { stage: "项目立项阶段", factor: data.stageProjectStart },
+      { stage: "项目招标阶段", factor: data.stageProjectBid },
       { stage: "项目早期阶段", factor: data.stageEarly },
       { stage: "项目中期阶段", factor: data.stageMiddle },
-      { stage: "项目后期阶段", factor: data.stageEnd },
+      { stage: "项目完成阶段", factor: data.stageEnd },
     ];
   } catch (error) {
     console.error("Error fetching scale data:", error);
