@@ -134,7 +134,7 @@ import {
     CaretTop,
     Warning,
 } from '@element-plus/icons-vue'
-import { h } from 'vue'   
+import { h} from 'vue'   
 import type { VNode } from 'vue'
 import type { TableColumnCtx } from 'element-plus'
 import { onMounted, ref, reactive } from "vue";
@@ -142,6 +142,7 @@ import PieChart from "@/components/functionalPointAnalysis/PieChart.vue";
 import axios from 'axios';
 import { useSystemStore } from '@/stores/systemStore';
 import { useUfpStore } from "@/stores/ufpClass";
+import { ElMessage } from "element-plus";
 
 const dialogTable1Visible = ref(false);
 const dialogTable2Visible = ref(false)
@@ -229,13 +230,11 @@ const updateGSC = async () => {
         "Multiple Sites": "diMultipleSites",
         "Facilitate Change": "diFacilitateChange",
       };
-      console.log(keyMapping["Complex Processing"])
       // 将 GSC 转换为对应的数据库字段名并赋值
       const key = keyMapping[row.GSC];
       if (key) {
         result[key] = row.DI;
       }
-
       return result;
     }, {
       // 初始化非 DI 的字段
@@ -249,14 +248,14 @@ const updateGSC = async () => {
     });
 
     // 2. 发送 POST 请求
-    const response = await axios.post("http://localhost:8088/gsc/update", requestData);
-
+    const response = await axios.post("https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/gsc/update", requestData);
+    console.log(response.data);
     // 3. 检查响应结果
-    if (response.data.success) {
-      console.log("数据更新成功");
-    } else {
-      console.error("数据更新失败：", response.data.message);
-    }
+    ElMessage({
+      message: response.data.msg,
+      type: "success",
+    });
+    dialogTable1Visible.value = false;
   } catch (error) {
     console.error("更新失败：", error);
   }
