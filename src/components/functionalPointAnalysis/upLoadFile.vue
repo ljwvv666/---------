@@ -88,7 +88,13 @@ const viewFP = async () => {
   } catch (error) {
     console.error('获取 System ID 失败:', error);
   }
-
+  try {
+    await axios.post('https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/gsc/add',{
+      systemID: systemStore.systemID
+    }); 
+  } catch (error) {
+    console.error('添加gsc失败:', error);
+  }
   router.push("/index/viewFP");
 }
 
