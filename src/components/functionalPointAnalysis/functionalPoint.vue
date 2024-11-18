@@ -2,7 +2,7 @@
   <div id="show_FP">
 
     <!-- 对所有信息的展示 -->
-    <div id="allInfo" v-show="isShow == 1">
+    <div id="allInfo" v-show="isShow == 1" style="margin-bottom: 20px;">
       <el-table
         :data="tableData"
         row-key="id"
@@ -79,6 +79,9 @@
       </el-table>
     </div>
 
+    <div style="display: flex; justify-content: flex-end;">
+      <el-button type="primary" @click="viewResult">确认无误，查看结果</el-button>
+    </div>
     <div v-show="isShow == 0">
       <el-empty description="无符合要求的部门信息" />
     </div>
@@ -99,6 +102,8 @@ import { useUfpStore } from "@/stores/ufpClass";
 const ufpStore = useUfpStore();
 
 const userStore = useUserStore(); // 获取 userStore 实例
+
+const router = useRouter();
 
 // 复杂度候选项
 const complexityOptions = ['低', '中', '高'];
@@ -233,7 +238,9 @@ async function deleteDtm(fpn: string) {
   }
 }
 
-
+const viewResult = () => {
+  router.push("/index/datascreen");
+}
 const isOpen = ref(true);
 const allInfoRef = ref(null);
 
