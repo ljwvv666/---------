@@ -5,7 +5,7 @@
       <el-col :span="8">
         <div class="statistic-card">
           <!-- gscTableData[0]?.ufp || 0 -->
-          <el-statistic :value=ufpStore.total>
+          <el-statistic :value=ufpStore.UFP>
             <template #title>
               <div style="display: inline-flex; align-items: center">
                 未调整功能点数
@@ -26,7 +26,7 @@
       <!-- GSC已调整功能点数 -->
       <el-col :span="8">
         <div class="statistic-card">
-          <el-statistic :value="693700">
+          <el-statistic :value=systemStore.adjustedFP1>
             <template #title>
               <div style="display: inline-flex; align-items: center">
                 调整功能点数v1
@@ -272,7 +272,7 @@ const updateGSC = async () => {
 
     // 2. 发送 POST 请求
     const response = await axios.post("https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/gsc/update", requestData);
-    console.log(response.data);
+    systemStore.adjustedFP1 = response.data.data.dfp;
     // 3. 检查响应结果
     ElMessage({
       message: response.data.msg,
