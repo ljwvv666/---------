@@ -189,10 +189,20 @@ const gscTableData = ref<{
 //获取gsc数据
 const fetchData = async () => {
   try {
+    //https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/gsc/get?gscID=${systemStore.systemID}
     // http://localhost:8088/gsc/get?gscID=${systemStore.systemID}
-    const response = await axios.get("https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/gsc/get?gscID=${systemStore.systemID}");
-    const rawData = response.data;
+    //const response = await axios.get('http://localhost:9000/superadmin/getAdminInfo', { withCredentials: true });
+    //const response = await axios.get('http://localhost:9000/cou/search', { params:{ keyword: search.value, order: order.value } });
+    //const response = await axios.get(`http://localhost:9000/gsc/get?systemID=${systemStore.systemID}`, { withCredentials: true });
+    const response = await axios.get('http://localhost:9000/gsc/get', { 
+  params: { 
+    systemID: 1
+  }
+});
 
+    const rawData = response.data.data;
+    console.log(response.data)
+    console.log(rawData)
     // 定义你的 GSC 映射
     const gscMapping = {
       diDataComm: "数据通信",
@@ -271,7 +281,7 @@ const updateGSC = async () => {
     });
 
     // 2. 发送 POST 请求
-    const response = await axios.post("https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/gsc/update", requestData);
+    const response = await axios.post("http://localhost:9000/gsc/update", requestData);
     systemStore.adjustedFP1 = response.data.data.dfp;
     // 3. 检查响应结果
     ElMessage({
@@ -293,7 +303,7 @@ const fetchOptions = async () => {
   try {
     const response = await axios.get("http://localhost:9000/standard/list");
     const data = response.data;
-
+console.log(data)
     // 转换数据为下拉框格式
     options.value = data.map((item: any) => ({
       label: item.name, // 显示的名称
