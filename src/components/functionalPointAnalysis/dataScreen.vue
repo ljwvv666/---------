@@ -116,15 +116,15 @@
 
    <!-- 规模变更因子弹窗 -->
    <el-dialog v-model="dialogTable2Visible" title="规模变更因子" width="800">
-    <el-select v-model="value" placeholder="请挑选标准" style="width: 240px;margin-bottom: 20px">
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-        @click="searchScaleByStandard"
-      />
-    </el-select>
+    <el-select v-model="value" placeholder="请挑选标准" style="width: 240px; margin-bottom: 20px" @change="searchScaleByStandard">
+  <el-option
+    v-for="item in options"
+    :key="item.value"
+    :label="item.label"
+    :value="item.value"
+  />
+</el-select>
+
     <el-table :data="scaleTableData" border style="margin-bottom: 20px;">
       <el-table-column property="stage" label="项目阶段" width="200" />
       <el-table-column property="factor" label="调整因子" width="200" />
@@ -291,7 +291,7 @@ const scaleTableData = ref<{ stage: string; factor: number }[]>([]); // 表格�
 //列出标准名候选项
 const fetchOptions = async () => {
   try {
-    const response = await axios.get("https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/standard/list");
+    const response = await axios.get("http://localhost:9000/standard/list");
     const data = response.data;
 
     // 转换数据为下拉框格式
@@ -306,21 +306,23 @@ const fetchOptions = async () => {
 // 根据标准名称搜索对应表格
 const searchScaleByStandard = async (selectedName: string) => {
   try {
-    const response = await axios.get(
-      `https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/standard/search`,
-      { params: { name: selectedName } }
-    );
+    const response = await axios.get("http://localhost:9000/standard/search", {
+  params: { name: selectedName },
+  paramsSerializer: (params) => {
+    return new URLSearchParams(params).toString();
+  },
+});
 
     const data = response.data;
     systemStore.standardName = response.data.standardName;
     systemStore.stageName = response.data.stage
     // 转换为表格所需的格式
     scaleTableData.value = [
-      { stage: "项目启动阶段", factor: data.stageProjectStart },
-      { stage: "项目投标阶段", factor: data.stageProjectBid },
+      { stage: "项目立项阶段", factor: data.stageProjectStart },
+      { stage: "项目招标阶段", factor: data.stageProjectBid },
       { stage: "项目早期阶段", factor: data.stageEarly },
       { stage: "项目中期阶段", factor: data.stageMiddle },
-      { stage: "项目后期阶段", factor: data.stageEnd },
+      { stage: "项目完成阶段", factor: data.stageEnd },
     ];
   } catch (error) {
     console.error("Error fetching scale data:", error);
@@ -331,12 +333,12 @@ const searchScaleByStandard = async (selectedName: string) => {
 const value2 = ref('')
 const options2 = [
   {
-    value: '项目开始',
-    label: '项目开始',
+    value: '项目立项',
+    label: '项目立项',
   },
   {
-    value: '项目投标',
-    label: '项目投标',
+    value: '项目招标',
+    label: '项目招标',
   },
   {
     value: '项目早期',
@@ -347,8 +349,8 @@ const options2 = [
     label: '项目中期',
   },
   {
-    value: '项目晚期',
-    label: '项目晚期',
+    value: '项目完成',
+    label: '项目完成',
   },
 ]
 
@@ -356,11 +358,11 @@ const options2 = [
 // 根据挑选的阶段重新计算已调整功能点数
 const updateScale = async () => {
   try {
-    const response = await axios.put(
-      `https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/scalechange/updateStage`,
+    const response = await axios.post(
+      `http://localhost:9000/scalechange/create`,
       { systemID: systemStore.systemID,
         standardName: systemStore.standardName,
-        newStage: value2.value});
+        stageName: value2.value});
 
     systemStore.adjustedFP2 = response.data;
   } catch (error) {
