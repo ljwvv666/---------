@@ -139,29 +139,7 @@ const dialogFormVisible = ref(false);
 const dialogFormVisible1 = ref(false);
 const dialogFormVisible2 = ref(false);
 
-// interface Department {
-//   pid: string;
-//   id: string;
-//   subSystem: string;
-//   module: string; // 可以根据实际情况定义更精确的类型
-//   FPN: string;
-//   FPD: string;
-//   type: string;
-//   complexity: string;
-//   UFP: string;
-// }
 
-// const department = reactive<Department>({
-//   pid: "",
-//   id: "",
-//   subSystem: "",
-//   module: "",
-//   FPN: "",
-//   FPD: "",
-//   type: "",
-//   complexity: "",
-//   UFP: ""
-// });
 
 const isShow = ref(1);
 
@@ -175,6 +153,7 @@ const fetchTableData = async () => {
     const response = await axios.get('https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/func/list'); // 替换为实际的接口地址
     const data = response.data.info;
     
+    const sum = ref(0);
     data.forEach(item => {
       const type = item.type
       if(type == "EO"){ ufpStore.EO++;}
@@ -182,7 +161,10 @@ const fetchTableData = async () => {
       if(type == "EQ"){ ufpStore.EQ++;}
       if(type == "ILF"){ ufpStore.ILF++;}
       if(type == "EIF"){ ufpStore.EIF++;}
+      sum.value += item.ufp;
     });
+    ufpStore.UFP = sum.value;
+    console.log(ufpStore.UFP)
 
 
     let sequenceNumber = 0; // 序号初始化
@@ -208,7 +190,6 @@ const fetchTableData = async () => {
       };
     });
 
-    console.log(tableData.value);
   } catch (error) {
     console.error('Failed to fetch table data:', error);
   }
