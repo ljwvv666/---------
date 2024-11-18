@@ -17,10 +17,6 @@
       const myChart = echarts.init(chartRef.value);
   
       const option = {
-        title: {
-          text: "饼状图示例",
-          left: "center",
-        },
         tooltip: {
           trigger: "item",
         },
