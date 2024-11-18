@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 export const useSystemStore = defineStore('system', {
   state: () => ({
     systemID: '', // 定义全局变量
+    gscID:'',
     standardName:'',
     stageName: '',
     adjustedFP1: 0,
@@ -14,6 +15,12 @@ export const useSystemStore = defineStore('system', {
     },
     clearSystemID() {
       this.systemID = ''; // 重置 systemID
+    },
+    setGSCID(id) {
+      this.gscID = id; // 修改 systemID
+    },
+    clearGSCID() {
+      this.gscID = ''; // 重置 systemID
     },
     setStandardName(name) {
       this.systemID = name; 
