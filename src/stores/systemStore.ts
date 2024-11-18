@@ -5,7 +5,8 @@ export const useSystemStore = defineStore('system', {
     systemID: '', // 定义全局变量
     standardName:'',
     stageName: '',
-    adjustedFP2: ''
+    adjustedFP1: 0,
+    adjustedFP2: 0
   }),
   actions: {
     setSystemID(id) {
@@ -30,7 +31,13 @@ export const useSystemStore = defineStore('system', {
       this.adjustedFP2 = dfp; 
     },
     clearAdjustedFP2() {
-      this.adjustedFP2 = ''; 
+      this.adjustedFP2 = 0; 
+    },
+    setAdjustedFP1(dfp) {
+      this.adjustedFP2 = dfp; 
+    },
+    clearAdjustedFP1() {
+      this.adjustedFP2 = 0; 
     },
   },
 });
