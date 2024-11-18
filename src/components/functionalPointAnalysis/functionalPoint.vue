@@ -115,22 +115,18 @@ const functionTypeOptions = ['EI', 'EO', 'EQ', 'ILF', 'EIF'];
 // 更新复杂度和功能类型的方法
 const updateFTOrComplexity = async (row) => {
   try {
-    const res = await axios.post('https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/func/update', {
-      systemID: row.systemID,
-      subSystem: row.subSystem,
-      module: row.module,
-      type: row.type,
-      complexity: row.complexity,
-      fpd: row.fpd,
-      ufp: row.ufp,
-      fpn: row.fpn
-    });
+    console.log(row.type);
+    let fd = new FormData()
+    fd.append("type",row.type)
+    fd.append("complexity",row.complexity)
+    fd.append("FPN",row.fpn)
+    const res = await axios.post('http://localhost:9000/func/update', fd);
 
     fetchTableData();
 
     // 更新成功后的提示
     ElMessage({
-      message: res.data.msg,
+      message: res.msg,
       type: "success",
     });
   } catch (error) {
@@ -155,7 +151,7 @@ let firm = ref();
 // 获取数据并处理
 const fetchTableData = async () => {
   try {
-    const response = await axios.get('https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/func/list'); // 替换为实际的接口地址
+    const response = await axios.get('http://localhost:9000/func/list'); // 替换为实际的接口地址
     const data = response.data.info;
     
     const sum = ref(0);
@@ -210,11 +206,14 @@ async function deleteDtm(fpn: string) {
       type: "warning",
     });
 
+console.log(fpn)
     // 调用后端接口删除功能点
-    const res = await axios.delete("https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/func/delete", {
+     axios.get("http://localhost:9000/func/delete", {
       params: {
-        fpn,
-      },
+        fpn
+      }
+    }).then(res=>{
+    alert(res.data.msg);
     });
 
     // 刷新表格数据
@@ -222,7 +221,7 @@ async function deleteDtm(fpn: string) {
     
     // 删除成功后的提示
     ElMessage({
-      message: res.data.msg,
+      message: "111",
       type: "success",
     });
 
