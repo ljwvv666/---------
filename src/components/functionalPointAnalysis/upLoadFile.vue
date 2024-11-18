@@ -25,7 +25,7 @@
       ref="uploadRef"
       class="upload-demo"
       drag
-      action="https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/func/trans"
+      action="http://localhost:9000/func/trans"
       :on-success="handleUploadSuccess"
       :on-error="handleUploadError"
       :before-upload="beforeUpload"
