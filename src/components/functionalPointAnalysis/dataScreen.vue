@@ -189,15 +189,7 @@ const gscTableData = ref<{
 //获取gsc数据
 const fetchData = async () => {
   try {
-    //https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/gsc/get?gscID=${systemStore.systemID}
-    // http://localhost:8088/gsc/get?gscID=${systemStore.systemID}
-    //const response = await axios.get('http://localhost:9000/superadmin/getAdminInfo', { withCredentials: true });
-    //const response = await axios.get('http://localhost:9000/cou/search', { params:{ keyword: search.value, order: order.value } });
-    //const response = await axios.get(`http://localhost:9000/gsc/get?systemID=${systemStore.systemID}`, { withCredentials: true });
-    const response = await axios.get('http://localhost:9000/gsc/get', { 
-  params: { 
-    systemID: 1
-  }
+   const response = await axios.get('http://localhost:9000/gsc/get', { params: { systemID: systemStore.systemID }
 });
 
     const rawData = response.data.data;
@@ -247,22 +239,22 @@ const updateGSC = async () => {
     // 1. 构造 JSON 数据
     const requestData = gscTableData.value.reduce((result, row) => {
       // 根据 GSC 名称映射到数据库字段名
-      const keyMapping = {
-        "Data Communication": "diDataComm",
-        "Distributed Data Processing": "diDistDataProc",
-        "Performance": "diPerformance",
-        "Heavy Configuration": "diHeavyConfig",
-        "Transaction Rate": "diTransRate",
-        "Online Data Entry": "diOnlineDataEntry",
-        "User Efficiency": "diUserEfficiency",
-        "Online Update": "diOnlineUpdate",
-        "Complex Processing": "diComplexProc",
-        "Reusability": "diReusability",
-        "Ease of Installation": "diInstallEase",
-        "Ease of Operation": "diOperEase",
-        "Multiple Sites": "diMultipleSites",
-        "Facilitate Change": "diFacilitateChange",
-      };
+          const keyMapping = {
+              "数据通信": "diDataComm",
+              "分布式数据处理": "diDistDataProc",
+              "性能要求": "diPerformance",
+              "大量配置": "diHeavyConfig",
+              "事务速率": "diTransRate",
+              "在线数据输入": "diOnlineDataEntry",
+              "用户效率": "diUserEfficiency",
+              "在线更新": "diOnlineUpdate",
+              "复杂处理": "diComplexProc",
+              "可复用性": "diReusability",
+              "安装方便性": "diInstallEase",
+              "操作方便性": "diOperEase",
+              "多站点支持": "diMultipleSites",
+              "便于变更": "diFacilitateChange"
+    };
       // 将 GSC 转换为对应的数据库字段名并赋值
       const key = keyMapping[row.GSC];
       if (key) {
@@ -371,9 +363,9 @@ const updateScale = async () => {
     const response = await axios.post(
       `http://localhost:9000/scalechange/create`,
       { systemID: systemStore.systemID,
-        standardName: systemStore.standardName,
+        standardName: value.value,
         stageName: value2.value});
-
+        //systemStore.systemID
     systemStore.adjustedFP2 = response.data;
   } catch (error) {
     console.error("Error fetching scale data:", error);
