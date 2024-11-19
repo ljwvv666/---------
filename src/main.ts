@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
+import FunctionalPoint from './components/functionalPointAnalysis/functionalPoint.vue'
 import router from './router'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
@@ -18,4 +19,7 @@ app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
 
+app.component('FunctionalPoint', FunctionalPoint);
+
 app.mount('#app')
+
