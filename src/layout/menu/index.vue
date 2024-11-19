@@ -25,23 +25,14 @@
       </el-menu-item>
     </el-sub-menu>
 
-    <el-sub-menu index="2">
+    <el-sub-menu index="2" @click="price">
       <template #title>
         <el-icon><location /></el-icon>
         <span>造价综合评估</span>
       </template>
-      <el-menu-item index="2-1" >
-        <el-icon><User /></el-icon>课程管理
-      </el-menu-item>
 
     </el-sub-menu>
-    <el-sub-menu index="3" @click="data">
-      <template #title>
-        <el-icon><location /></el-icon>
-        <span>报告生成和展示</span>
-      </template>
-    </el-sub-menu>
-    <el-sub-menu index="4">
+    <el-sub-menu index="3">
       <template #title>
         <el-icon><location /></el-icon>
         <span>个人信息管理</span>
@@ -76,11 +67,14 @@ const dataScreen = ()=> {
   router.push('/index/datascreen')
 }
 
-
-
 const data = () =>  {
   router.push('/index/data')
 }
+
+const price = () => {
+  router.push('/index/price');
+};
+
 </script>
 
 <style></style>

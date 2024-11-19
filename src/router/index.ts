@@ -32,6 +32,10 @@ const router = createRouter({
         {
           path:'datascreen',
           component: () => import('@/components/functionalPointAnalysis/dataScreen.vue'),
+        },
+        {
+          path:'price',
+          component: () => import('@/components/PriceEvaluation/price.vue'),
         }
       ]
     },
