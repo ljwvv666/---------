@@ -151,6 +151,11 @@ let firm = ref();
 // 获取数据并处理
 const fetchTableData = async () => {
   try {
+    ufpStore.EO=0;
+    ufpStore.EI=0;
+    ufpStore.EQ=0;
+    ufpStore.ILF=0;
+    ufpStore.EIF=0;
     const response = await axios.get('http://localhost:9000/func/list'); // 替换为实际的接口地址
     const data = response.data.info;
     
