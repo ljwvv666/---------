@@ -47,4 +47,13 @@ export const useSystemStore = defineStore('system', {
       this.adjustedFP2 = 0; 
     },
   },
+  persist: {
+    enabled: true, // 启用持久化
+    strategies: [
+      {
+        key: 'systemStore', // 本地存储的键名
+        storage: sessionStorage,
+      },
+    ],
+  },
 });
