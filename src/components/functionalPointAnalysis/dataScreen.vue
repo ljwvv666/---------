@@ -90,8 +90,8 @@
     </div>
     
   <!-- GSC弹窗 -->
-  <el-dialog v-model="dialogTable1Visible" v-if="dialogTable1Visible" title="综合系统特征表" width="800">
-    <el-table :data="gscTableData" border style="width: 100%">
+  <el-dialog v-model="dialogTable1Visible" v-if="dialogTable1Visible" title="综合系统特征表" width="590">
+    <el-table :data="gscTableData" border style="width: 350px;margin-left: 90px;">
       <!-- 表头 -->
       <el-table-column property="GSC" label="GSC" width="200" />
       <!-- 可编辑 DI 列 -->
@@ -109,8 +109,8 @@
       </el-table-column>
     </el-table>
     <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
-      <el-button type="primary" style="margin-right: 8px;" @click="updateGSC">确定修改</el-button>
-      <el-button @click="dialogTable1Visible=false">取消</el-button>
+      <el-button type="primary" style="margin-right: 8px;width: 90px;" @click="updateGSC">确定修改</el-button>
+      <el-button @click="dialogTable1Visible=false" style="width: 90px;">取  消</el-button>
     </div>
   </el-dialog>
 

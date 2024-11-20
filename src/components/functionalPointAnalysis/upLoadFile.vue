@@ -1,6 +1,6 @@
 <template>
 
-    <el-button type="primary" style="margin-bottom: 20px;" @click="downloadFile">下载模板</el-button>
+    <el-button type="primary" style="margin-bottom: 20px;width: 90px;" @click="downloadFile">下载模板</el-button>
     <!-- 注意事项 -->
     <el-card style="max-width: 680px; margin-bottom: 20px;">
         <template #header>

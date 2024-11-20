@@ -7,7 +7,7 @@
     <el-container class="container">
       <el-aside
         width="210px"
-        style="height: calc(100vh - 100px)"
+        style="height: calc(100vh)"
         class="sidebar-container"
       >
         <Menu />
@@ -40,6 +40,7 @@ html, body, .app-wrapper {
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden; /* 禁止页面整体滚动 */
 }
 
 .app-wrapper {
@@ -54,26 +55,42 @@ html, body, .app-wrapper {
   line-height: 60px;
   text-align: center;
   height: 60px;
+  position: fixed; /* 固定 Header */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000; /* 确保在顶部显示 */
 }
 
 .container {
+  margin-top: 60px; /* 为 Header 腾出空间 */
+  height: calc(100vh - 60px); /* 剩余高度 */
   display: flex;
-  flex: 1;
-  height: 100%; /* 确保占满剩余高度 */
 }
 
 .sidebar-container {
   background-color: #545c64;
   color: #fff;
-  padding: 20px;
+  position: fixed; /* 固定 Sidebar */
+  top: 60px; /* 从 Header 下方开始 */
+  height: calc(100vh - 60px); /* 修复不正确的高度计算 */
+  width: 210px;
+  display: flex;
+  flex-direction: column; /* 确保菜单内容占满 */
 }
 
 .main {
+  margin-left: 210px; /* 为固定的 Sidebar 腾出空间 */
   background-color: #f2f2f2;
   padding: 20px;
-  flex: 1;
+  height: calc(100vh - 60px); /* 确保占满剩余高度 */
+  box-sizing: border-box; /* 确保 padding 不影响布局 */
+  display: flex;
+  flex-direction: column;
 }
 
-
+.main:empty {
+  overflow: hidden; /* 当内容为空时禁用滚动 */
+}
 
 </style>
