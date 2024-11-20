@@ -116,7 +116,7 @@
 
    <!-- 规模变更因子弹窗 -->
    <el-dialog v-model="dialogTable2Visible" title="规模变更因子" width="800">
-    <el-select v-model="value" placeholder="请挑选标准" style="width: 240px; margin-bottom: 20px" @change="searchScaleByStandard">
+    <el-select v-model="systemStore.standardName" placeholder="请挑选标准" style="width: 240px; margin-bottom: 20px" @change="searchScaleByStandard">
   <el-option
     v-for="item in options"
     :key="item.value"
@@ -130,7 +130,7 @@
       <el-table-column property="factor" label="调整因子" width="200" />
     </el-table>
 
-    <el-select v-model="value2" placeholder="请挑选项目阶段" style="width: 240px">
+    <el-select v-model="systemStore.stageName" placeholder="请挑选项目阶段" style="width: 240px">
       <el-option
         v-for="item in options2"
         :key="item.value"
@@ -316,8 +316,9 @@ const searchScaleByStandard = async (selectedName: string) => {
 });
 
     const data = response.data;
-    systemStore.standardName = response.data.standardName;
-    systemStore.stageName = response.data.stage
+    
+    //systemStore.standardName = response.data.standardName;
+   // systemStore.stageName = response.data.stage
     // 转换为表格所需的格式
     scaleTableData.value = [
       { stage: "项目立项阶段", factor: data.stageProjectStart },
@@ -363,8 +364,8 @@ const updateScale = async () => {
     const response = await axios.post(
       `http://localhost:9000/scalechange/create`,
       { systemID: systemStore.systemID,
-        standardName: value.value,
-        stageName: value2.value});
+        standardName: systemStore.standardName,
+        stageName: systemStore.stageName});
         //systemStore.systemID
     systemStore.adjustedFP2 = response.data;
   } catch (error) {
@@ -378,6 +379,9 @@ const updateScale = async () => {
 onMounted(() => {
   fetchData();
   fetchOptions();
+  if (systemStore.standardName) {
+    searchScaleByStandard(systemStore.standardName);
+  }
 });
 
 onUnmounted(() => {

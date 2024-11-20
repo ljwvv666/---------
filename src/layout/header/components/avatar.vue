@@ -1,9 +1,9 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    欢迎您，{{ userStore.user.role }}{{ userStore.user.userName }}
+    欢迎您  
     <el-dropdown>
       <span class="el-dropdown-link">
-        <el-avatar :size="50" :src="circleUrl" />
+        <el-avatar :size="50" :src="circleUrl" style="margin-left: 12px;"/>
       </span>
       <template #dropdown>
         <el-dropdown-menu>

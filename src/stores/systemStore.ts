@@ -7,7 +7,8 @@ export const useSystemStore = defineStore('system', {
     standardName:'',
     stageName: '',
     adjustedFP1: 0,
-    adjustedFP2: 0
+    adjustedFP2: 0,
+    
   }),
   actions: {
     setSystemID(id) {

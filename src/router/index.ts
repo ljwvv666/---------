@@ -21,20 +21,22 @@ const router = createRouter({
       children:[
         {
           path:'uploadFile',
-          name:'upload-file',
+          name:'上传文件',
           component: () => import('@/components/functionalPointAnalysis/upLoadFile.vue'),
         },
         {
           path:'viewFP',
-          name:'view-FP',
+          name:'功能点明细',
           component: () => import('@/components/functionalPointAnalysis/functionalPoint.vue'),
         },
         {
           path:'datascreen',
+          name:'结果呈现',
           component: () => import('@/components/functionalPointAnalysis/dataScreen.vue'),
         },
         {
           path:'price',
+          name:'造价综合评估',
           component: () => import('@/components/PriceEvaluation/price.vue'),
         }
       ]

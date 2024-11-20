@@ -32,14 +32,23 @@ const breadcrumbs = computed(() => {
       case "user":
         text = "用户管理";
         break;
-      case "tenant":
-        text = "租户管理";
+      case "viewFP":
+        text = "功能点明细";
         break;
       case "editindividual":
         text = "个人中心";
         break;
       case "editpassword":
         text = "修改密码";
+        break;
+      case "uploadFile":
+        text = "上传文件";
+        break;
+      case "datascreen":
+        text = "结果呈现";
+        break;
+      case "price":
+        text = "造价综合评估";
         break;
       // 添加其他路由的自定义中文名称
       default:
