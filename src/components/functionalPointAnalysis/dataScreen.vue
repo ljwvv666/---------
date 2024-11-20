@@ -115,8 +115,8 @@
   </el-dialog>
 
    <!-- 规模变更因子弹窗 -->
-   <el-dialog v-model="dialogTable2Visible" title="规模变更因子" width="800">
-    <el-select v-model="systemStore.standardName" placeholder="请挑选标准" style="width: 240px; margin-bottom: 20px" @change="searchScaleByStandard">
+   <el-dialog v-model="dialogTable2Visible" title="规模变更因子" width="550">
+    <el-select v-model="systemStore.standardName" placeholder="请挑选标准" style="width: 160px;margin-left: 80px; margin-bottom: 20px;margin-top: 20px;" @change="searchScaleByStandard">
   <el-option
     v-for="item in options"
     :key="item.value"
@@ -125,12 +125,7 @@
   />
 </el-select>
 
-    <el-table :data="scaleTableData" border style="margin-bottom: 20px;">
-      <el-table-column property="stage" label="项目阶段" width="200" />
-      <el-table-column property="factor" label="调整因子" width="200" />
-    </el-table>
-
-    <el-select v-model="systemStore.stageName" placeholder="请挑选项目阶段" style="width: 240px">
+    <el-select v-model="systemStore.stageName" placeholder="请挑选项目阶段" style="width: 160px; margin-left:20px;margin-bottom: 20px;margin-top: 20px;">
       <el-option
         v-for="item in options2"
         :key="item.value"
@@ -138,10 +133,13 @@
         :value="item.value"
       />
     </el-select>
-
+ <el-table :data="scaleTableData" border style="margin-bottom: 20px; width: 340px;margin-top: 10px;margin-left: 80px;">
+      <el-table-column property="stage" label="项目阶段" width="170" />
+      <el-table-column property="factor" label="调整因子" width="170" />
+    </el-table>
     <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
-      <el-button type="primary" style="margin-right: 8px;" @click="updateScale">确定修改</el-button>
-      <el-button @click="dialogTable2Visible=false">取消</el-button>
+      <el-button type="primary" style="margin-right: 8px;width: 90px;" @click="updateScale">确定修改</el-button>
+      <el-button @click="dialogTable2Visible=false" style="width: 90px;">取  消</el-button>
     </div>
   </el-dialog>
 </template>
