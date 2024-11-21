@@ -38,6 +38,11 @@ const router = createRouter({
           path:'price',
           name:'造价综合评估',
           component: () => import('@/components/PriceEvaluation/price.vue'),
+        },
+        {
+          path:'project',
+          name:'项目管理',
+          component: () => import('@/components/Management/ProjectManagement.vue'),
         }
       ]
     },
