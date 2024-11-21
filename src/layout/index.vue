@@ -44,7 +44,7 @@ import { useRouter, useRoute } from "vue-router";
 import { Close } from "@element-plus/icons-vue";
 import Menu from "./menu/index.vue";
 import Header from "./header/index.vue"
-import Main from "@/components/UserManagement.vue"
+import HomePage from "@/components/homepage.vue"
 // const tabPosition = ref<TabsInstance['tabPosition']>('left')
   const tags = ref<{ name: string; path: string }[]>([]); // 标签数据
   const router = useRouter();
@@ -127,6 +127,7 @@ html, body, .app-wrapper {
   width: 210px;
   display: flex;
   flex-direction: column; /* 确保菜单内容占满 */
+  z-index: 1000;
 }
 
 .main {
@@ -149,6 +150,7 @@ html, body, .app-wrapper {
   padding: 1px;
   background: #f5f5f5;
   border-bottom: 2px solid #ddd;
+  z-index: 1000;
 }
 
 .scroll-container {
