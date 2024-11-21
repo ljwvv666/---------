@@ -1,4 +1,82 @@
 <template>
+      <!-- 粒子背景组件 -->
+    <vue-particles id="tsparticles" @particles-loaded="particlesLoaded" url="http://foo.bar/particles.json" />
+
+    <vue-particles
+        id="tsparticles"
+        @particles-loaded="particlesLoaded"
+        :options="{
+          background: {
+            color: {
+              value: '#f2f2f2',
+            },
+          },
+          fpsLimit: 120,
+          interactivity: {
+            events: {
+              onClick: {
+                enable: true,
+                mode: 'push',
+              },
+              onHover: {
+                enable: true,
+                mode: 'repulse',
+              },
+            },
+            modes: {
+              bubble: {
+                distance: 400,
+                duration: 2,
+                opacity: 0.8,
+                size: 40,
+              },
+              push: {
+                quantity: 4,
+              },
+              repulse: {
+                distance: 200,
+                duration: 0.4,
+              },
+            },
+          },
+          particles: {
+            color: {
+              value: '#D3D3D3',
+            },
+            links: {
+              color: '#D3D3D3',
+              distance: 150,
+              enable: true,
+              opacity: 0.5,
+              width: 1,
+            },
+            move: {
+              direction: 'none',
+              enable: true,
+              outModes: 'bounce',
+              random: false,
+              speed: 6,
+              straight: false,
+            },
+            number: {
+              density: {
+                enable: true,
+              },
+              value: 60,
+            },
+            opacity: {
+              value: 0.5,
+            },
+            shape: {
+              type: 'circle',
+            },
+            size: {
+              value: { min: 1, max: 5 },
+            },
+          },
+          detectRetina: true,
+        }"
+    />
   <!-- 三个数据展示 -->
     <el-row :gutter="16" style="margin-bottom: 80px;margin-top: 20px;margin-right: 20px;margin-left: 20px;">
       <!-- 未调整功能点数 -->
@@ -193,7 +271,9 @@ const gscTableData = ref<{
 const formatToTwoDecimals = (value: number) => {
   return value ? value.toFixed(1) : '0.0'; // 保留两位小数
 };
-
+const particlesLoaded = async container => {
+    console.log("Particles container loaded", container);
+};
 //获取gsc数据
 const fetchData = async () => {
   try {
@@ -565,5 +645,14 @@ const tableData: Product[] = [
   border-radius: 4px;
   min-height: 36px;
 }
+
+.particles-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -100; /* 确保粒子背景在底层 */
+  }
 </style>
   
