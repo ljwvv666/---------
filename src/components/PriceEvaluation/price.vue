@@ -1,5 +1,60 @@
 <template>
   <div class="bg-white min-h-screen w-screen relative">
+    <!-- 搜索区域 -->
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* margin-bottom: 1.5rem; */
+      "
+    >
+      <el-input
+        v-model="searchTerm"
+        placeholder="请输入项目 ID 搜索"
+        style="width: 50%; max-width: 500px; transition: all 0.3s ease"
+        size="large"
+        clearable
+        @keyup.enter="handleSearch"
+      >
+        <template #append>
+          <div style="display: flex; align-items: center; gap: 0.5rem">
+            <el-button
+              v-if="!isSearching"
+              type="primary"
+              @click="handleSearch"
+              style="
+                padding: 0.5rem 1.25rem;
+                border-radius: 0.375rem;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+              "
+            >
+              <el-icon><Search /></el-icon>
+              搜索
+            </el-button>
+            <el-button
+              @click="resetSearch"
+              v-if="isSearching"
+              style="
+                padding: 0.5rem 1.25rem;
+                border-radius: 0.375rem;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+              "
+            >
+              <el-icon><Refresh /></el-icon>
+              重置
+            </el-button>
+          </div>
+        </template>
+      </el-input>
+    </div>
+
     <!-- 主要内容区域 -->
     <el-main
       class="w-full px-[20%] py-8 pt-20 relative z-10"
@@ -11,7 +66,6 @@
         v-if="!loading"
         :gutter="20"
         class="grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 px-[20%] py-[1%]"
-        
       >
         <el-col
           v-for="project in projects"
@@ -25,45 +79,75 @@
           <el-card
             class="shadow-md hover:shadow-lg transition-shadow"
             :body-style="{ padding: '20px' }"
-            style="margin-top: 25px;margin-bottom: 30px"
+            style="margin-top: 25px; margin-bottom: 30px"
           >
             <!-- 项目头部 -->
             <div class="flex justify-between items-center mb-4">
-              <div>
-                <h3 class="text-xl font-semibold text-gray-800">{{ project.projName }}</h3>
-                <p class="text-gray-500 text-sm">项目 ID: {{ project.projid }}</p>
-              </div>
-              <div class="flex items-center gap-2">
-                <!-- 条件渲染状态标签 -->
-                <el-tag v-if="project.ae !== 0 || project.esdc !== 0" type="success" size="small">
-                  进行中
-                </el-tag>
-                <el-tag v-else type="info" size="small"> 未开始 </el-tag>
+              <!-- 左侧部分 -->
+              <div class="flex items-center space-x-3">
+                <h3 class="text-xl font-semibold text-gray-800">
+                  {{ project.projName }}
+                </h3>
 
-                <!-- 下载项目说明按钮 -->
-                <el-button
-                  type="text"
-                  icon="Download"
-                  @click="downloadProject(project.url)"
-                  size="small"
+                <!-- 项目 ID 与状态和按钮保持一行 -->
+                <div
+                  class="flex items-center space-x-2"
+                  style="display: flex; align-items: center; gap: 10px"
                 >
-                  下载说明
-                </el-button>
+                  <p class="text-gray-500 text-sm" style="margin: 0">
+                    项目 ID: {{ project.projid }}
+                  </p>
+
+                  <!-- 条件渲染状态标签 -->
+                  <el-tag
+                    v-if="project.ae !== 0 || project.esdc !== 0"
+                    type="success"
+                    size="small"
+                    style="flex-shrink: 0; margin-left: 100px"
+                  >
+                    进行中
+                  </el-tag>
+                  <el-tag
+                    v-else
+                    type="info"
+                    size="small"
+                    style="flex-shrink: 0; margin-left: 100px"
+                  >
+                    未开始
+                  </el-tag>
+
+                  <!-- 下载项目说明按钮 -->
+                  <el-button
+                    type="text"
+                    icon="Download"
+                    @click="downloadProject(project.url)"
+                    size="small"
+                    style="flex-shrink: 0"
+                  >
+                    下载说明
+                  </el-button>
+                </div>
               </div>
             </div>
 
             <el-row :gutter="10" class="mb-4">
               <el-col :span="12">
-                <el-card class="bg-gray-100" style="margin-bottom: 15px;margin-top: 10px">
+                <el-card
+                  class="bg-gray-100"
+                  style="margin-bottom: 15px; margin-top: 10px"
+                >
                   <p class="text-gray-500 text-sm mb-1">预估工作量</p>
                   <p class="text-xl font-semibold text-gray-800">
-                    {{ project.ae === 0 ? '--' : project.ae + ' 人时' }}
+                    {{ project.ae === 0 ? "--" : project.ae + " 人时" }}
                   </p>
                 </el-card>
               </el-col>
               <el-col :span="12">
-                <el-card class="bg-gray-100" style="margin-bottom: 15px;margin-top: 10px">
-                  <p class="text-gray-500 text-sm mb-1" >预估成本</p>
+                <el-card
+                  class="bg-gray-100"
+                  style="margin-bottom: 15px; margin-top: 10px"
+                >
+                  <p class="text-gray-500 text-sm mb-1">预估成本</p>
                   <p class="text-xl font-semibold text-gray-800">
                     ¥{{ formatNumber(project.esdc) }}
                   </p>
@@ -79,7 +163,6 @@
                   plain
                   @click="showWorkloadDialog(project)"
                   size="mini"
-                  round
                   block
                 >
                   工作量评估
@@ -91,7 +174,6 @@
                   plain
                   @click="showCostDialog(project)"
                   size="mini"
-                  round
                   block
                 >
                   造价评估
@@ -114,16 +196,30 @@
       </el-row>
 
       <!-- 分页控制 -->
-      <div style="display: flex; justify-content: center; align-items: center; margin-top: 1.5rem;">
-        <el-button @click="prevPage" :disabled="pageNum === 1" type="primary" plain size="mini">
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-top: 1.5rem;
+        "
+      >
+        <el-button
+          @click="prevPage"
+          :disabled="pageNum === 1"
+          type="primary"
+          plain
+          size="mini"
+        >
           上一页
         </el-button>
-        <span class="text-lg font-semibold" style="margin: 0 1rem;">第 {{ pageNum }} 页</span>
-        <el-button @click="nextPage" type="primary" plain size="mini">
+        <span class="text-lg font-semibold" style="margin: 0 1rem"
+          >第 {{ pageNum }} 页</span
+        >
+        <el-button @click="nextPage" type="primary" plain size="mini" :disabled="pageNum === maxPage">
           下一页
         </el-button>
       </div>
-
     </el-main>
 
     <!-- 工作量评估弹窗 -->
@@ -136,7 +232,7 @@
     >
       <el-form
         :model="workloadForm"
-        label-width="180px"
+        label-width="200px"
         class="workload-form"
         label-position="left"
       >
@@ -147,7 +243,7 @@
               :min="0"
               :precision="2"
               controls-position="right"
-              placeholder="请输入功能点数"
+              placeholder="功能点数"
             />
           </el-form-item>
 
@@ -157,7 +253,7 @@
               :min="0"
               :precision="2"
               controls-position="right"
-              placeholder="请输入调整因子"
+              placeholder="规模因子"
             />
           </el-form-item>
 
@@ -167,7 +263,7 @@
               :min="0"
               :precision="2"
               controls-position="right"
-              placeholder="请输入业务领域调整因子"
+              placeholder="业务因子"
             />
           </el-form-item>
 
@@ -177,7 +273,7 @@
               :min="0"
               :precision="2"
               controls-position="right"
-              placeholder="请输入应用类型调整因子"
+              placeholder="应用因子"
             />
           </el-form-item>
 
@@ -187,7 +283,7 @@
               :min="0"
               :precision="2"
               controls-position="right"
-              placeholder="请输入质量特性调整因子"
+              placeholder="质量因子"
             />
           </el-form-item>
 
@@ -197,7 +293,7 @@
               :min="0"
               :precision="2"
               controls-position="right"
-              placeholder="请输入开发语言调整因子"
+              placeholder="语言因子"
             />
           </el-form-item>
 
@@ -207,16 +303,22 @@
               :min="0"
               :precision="2"
               controls-position="right"
-              placeholder="请输入团队背景因子"
+              placeholder="背景因子"
             />
           </el-form-item>
         </div>
 
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitWorkloadForm" class="submit-btn">
+          <el-button
+            type="primary"
+            @click="submitWorkloadForm"
+            class="submit-btn"
+          >
             提交评估
           </el-button>
-          <el-button @click="showWorkload = false" class="cancel-btn"> 取消 </el-button>
+          <el-button @click="showWorkload = false" class="cancel-btn">
+            取消
+          </el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -230,7 +332,12 @@
       width="600px"
       :append-to-body="true"
     >
-      <el-form :model="costForm" label-width="150px" class="cost-form" label-position="left">
+      <el-form
+        :model="costForm"
+        label-width="150px"
+        class="cost-form"
+        label-position="left"
+      >
         <div class="form-grid">
           <el-form-item label="非人力成本 (DNC)" prop="dnc">
             <el-input-number
@@ -246,7 +353,11 @@
           </el-form-item>
 
           <el-form-item label="质量等级 (Q)" prop="q">
-            <el-select v-model="costForm.q" placeholder="请选择质量等级" class="full-width-select">
+            <el-select
+              v-model="costForm.q"
+              placeholder="请选择质量等级"
+              class="full-width-select"
+            >
               <el-option-group label="质量等级">
                 <el-option
                   v-for="level in qualityLevels"
@@ -271,7 +382,12 @@
               class="full-width-select"
             >
               <el-option-group label="城市列表">
-                <el-option v-for="city in citiesList" :key="city" :label="city" :value="city">
+                <el-option
+                  v-for="city in citiesList"
+                  :key="city"
+                  :label="city"
+                  :value="city"
+                >
                   <div class="select-option">
                     <span>{{ city }}</span>
                   </div>
@@ -307,7 +423,9 @@
           <el-button type="primary" @click="submitCostForm" class="submit-btn">
             提交评估
           </el-button>
-          <el-button @click="showCost = false" class="cancel-btn"> 取消 </el-button>
+          <el-button @click="showCost = false" class="cancel-btn">
+            取消
+          </el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -331,7 +449,12 @@
               class="history-table"
               :row-class-name="tableRowClassName"
             >
-              <el-table-column prop="projName" label="项目名称" min-width="180" fixed>
+              <el-table-column
+                prop="projName"
+                label="项目名称"
+                min-width="180"
+                fixed
+              >
                 <template #default="{ row }">
                   <div class="project-name-cell">
                     <i class="el-icon-document"></i>
@@ -339,16 +462,27 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="ae" label="工作量 (人时)" sortable align="right" width="120">
+              <el-table-column
+                prop="ae"
+                label="工作量/人时"
+                sortable
+                align="right"
+                width="150"
+              >
                 <template #default="{ row }">
                   <span class="workload-cell">
                     {{ row.ae.toLocaleString() }}
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column prop="date" label="记录ID" width="120" align="center">
+              <el-table-column
+                prop="date"
+                label="记录ID"
+                width="120"
+                align="center"
+              >
                 <template #default="{ row }">
-                  {{ row.id || '-' }}
+                  {{ row.id || "-" }}
                 </template>
               </el-table-column>
               <!-- <el-table-column label="操作" width="100" fixed="right" align="center">
@@ -372,7 +506,12 @@
               class="history-table"
               :row-class-name="tableRowClassName"
             >
-              <el-table-column prop="projname" label="项目名称" min-width="180" fixed>
+              <el-table-column
+                prop="projname"
+                label="项目名称"
+                min-width="180"
+                fixed
+              >
                 <template #default="{ row }">
                   <div class="project-name-cell">
                     <i class="el-icon-coin"></i>
@@ -380,14 +519,27 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="esdc" label="综合造价 (¥)" sortable align="right" width="150">
+              <el-table-column
+                prop="esdc"
+                label="综合造价 (¥)"
+                sortable
+                align="right"
+                width="150"
+              >
                 <template #default="{ row }">
-                  <span class="cost-cell"> ¥ {{ row.esdc.toLocaleString() }} </span>
+                  <span class="cost-cell">
+                    ¥ {{ row.esdc.toLocaleString() }}
+                  </span>
                 </template>
               </el-table-column>
-              <el-table-column prop="date" label="记录ID" width="120" align="center">
+              <el-table-column
+                prop="date"
+                label="记录ID"
+                width="120"
+                align="center"
+              >
                 <template #default="{ row }">
-                  {{ row.id || '-' }}
+                  {{ row.id || "-" }}
                 </template>
               </el-table-column>
               <!-- <el-table-column label="操作" width="100" fixed="right" align="center">
@@ -405,7 +557,9 @@
       <template v-slot:footer>
         <div class="dialog-footer">
           <el-tag>总条数 : {{ historyWorkloads.length }}</el-tag>
-          <el-button @click="showHistory = false" class="close-btn"> 关闭 </el-button>
+          <el-button @click="showHistory = false" class="close-btn">
+            关闭
+          </el-button>
         </div>
       </template>
     </el-dialog>
@@ -429,10 +583,11 @@ import {
   ElTableColumn,
   ElTabs,
   ElTabPane,
-} from 'element-plus'
-import 'element-plus/dist/index.css'
+} from "element-plus";
+import "element-plus/dist/index.css";
 
 export default {
+  name: "PriceEvaluation",
   components: {
     ElMain,
     ElRow,
@@ -455,177 +610,202 @@ export default {
     return {
       projects: [],
       loading: true,
-      searchTerm: '',
+      isSearching: false,
+      searchTerm: "",
       showWorkload: false,
       showCost: false,
       showHistory: false,
       selectedProject: null,
       workloadForm: {
-        s: '',
-        sf: '',
-        bd: '',
-        at: '',
-        qr: '',
-        sl: '',
-        dt: '',
-        p1: '',
-        p2: '',
-        p3: '',
+        s: "",
+        sf: "",
+        bd: "",
+        at: "",
+        qr: "",
+        sl: "",
+        dt: "",
+        p1: "",
+        p2: "",
+        p3: "",
       },
       costForm: {
-        dnc: '',
-        q: '',
-        cityname: '',
-        rsklevel: '',
+        dnc: "",
+        q: "",
+        cityname: "",
+        rsklevel: "",
       },
       citiesList: [],
       historyWorkloads: [],
       historyCosts: [],
-      activeTab: 'workload', // 'workload' or 'cost'
+      activeTab: "workload", // 'workload' or 'cost'
       pageNum: 1,
       pageSize: 6,
-      name: 'HistoryModal',
+      maxPage: 1, // 最大页数
+      name: "HistoryModal",
       qualityLevels: [
         {
-          value: '高',
-          label: '高',
-          description: '最高质量标准，严格质量控制',
+          value: "高",
+          label: "高",
+          description: "最高质量标准，严格质量控制",
         },
         {
-          value: '中',
-          label: '中',
-          description: '标准质量要求，平衡成本和质量',
+          value: "中",
+          label: "中",
+          description: "标准质量要求，平衡成本和质量",
         },
         {
-          value: '低',
-          label: '低',
-          description: '基本质量要求，成本优先',
+          value: "低",
+          label: "低",
+          description: "基本质量要求，成本优先",
         },
       ],
       riskLevels: [
         {
-          value: '高',
-          label: '高',
-          description: '风险较大，需要特别关注',
+          value: "高",
+          label: "高",
+          description: "风险较大，需要特别关注",
         },
         {
-          value: '中',
-          label: '中',
-          description: '一般风险水平，需要适度管控',
+          value: "中",
+          label: "中",
+          description: "一般风险水平，需要适度管控",
         },
         {
-          value: '低',
-          label: '低',
-          description: '风险较小，管理难度低',
+          value: "低",
+          label: "低",
+          description: "风险较小，管理难度低",
         },
       ],
-    }
+    };
   },
   methods: {
-    async fetchProjects() {
-      this.loading = true
+    async fetchMaxPage() {
       try {
-        const response = await fetch(
-          `http://118.202.10.11:8080/list?pageNum=${this.pageNum}&pageSize=${this.pageSize}`,
-        )
-        const data = await response.json()
+        const response = await fetch("http://118.202.10.11:8080/maxpage");
+        const data = await response.json();
         if (data.isok) {
-          this.projects = data.lists
+          this.maxPage = data.num;
         } else {
-          this.projects = []
+          this.maxPage = 1;
         }
       } catch (error) {
-        console.error('Error fetching projects:', error)
-        this.projects = []
+        console.error("Error fetching maxPage:", error);
+        this.maxPage = 1;
+      }
+    },
+    async fetchProjects() {
+      this.loading = true;
+      try {
+        const response = await fetch(
+          `http://118.202.10.11:8080/list?pageNum=${this.pageNum}&pageSize=${this.pageSize}`
+        );
+        const data = await response.json();
+        if (data.isok) {
+          this.projects = data.lists;
+          this.maxPage = data.maxpage;
+        } else {
+          this.projects = [];
+        }
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        this.projects = [];
+        this.maxPage = 1;
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
     async searchProjects(id) {
-      this.loading = true
+      this.loading = true;
       try {
         const response = await fetch(
-          `http://118.202.10.11:8080/listbyid?id=${encodeURIComponent(id)}`,
-        )
-        const data = await response.json()
+          `http://118.202.10.11:8080/listbyid?id=${encodeURIComponent(id)}`
+        );
+        const data = await response.json();
         if (data.isok) {
           if (data.proj) {
-            this.projects = [data.proj]
+            this.projects = [data.proj];
+            this.maxPage = 1;
           } else {
-            this.projects = []
+            this.projects = [];
+            this.maxPage = 1;
           }
         } else {
-          this.projects = []
+          this.projects = [];
+          this.maxPage = 1;
         }
       } catch (error) {
-        console.error('Error searching projects:', error)
-        this.projects = []
+        console.error("Error searching projects:", error);
+        this.projects = [];
+        this.maxPage = 1;
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
     handleSearch() {
       if (this.searchTerm.trim()) {
-        this.searchProjects(this.searchTerm.trim())
+        this.searchProjects(this.searchTerm.trim());
+        this.isSearching = true;
       } else {
-        this.resetSearch()
+        this.resetSearch();
       }
     },
     resetSearch() {
-      this.searchTerm = ''
-      this.pageNum = 1
-      this.fetchProjects()
+      this.searchTerm = "";
+      this.pageNum = 1;
+      this.fetchProjects();
+      this.fetchMaxPage();
+      this.isSearching = false;
     },
     showWorkloadDialog(project) {
-      this.selectedProject = project
-      this.showWorkload = true
-      console.log('selectedProject:', project)
+      this.selectedProject = project;
+      this.showWorkload = true;
+      console.log("selectedProject:", project);
 
       // 初始化表单
       this.workloadForm = {
-        s: project.s || '',
-        sf: project.sf || '',
-        bd: project.bd || '',
-        at: project.at || '',
-        qr: project.qr || '',
-        sl: project.sl || '',
-        dt: project.dt || '',
-        p1: project.p1 || '',
-        p2: project.p2 || '',
-        p3: project.p3 || '',
-      }
+        s: project.s || "",
+        sf: project.sf || "",
+        bd: project.bd || "",
+        at: project.at || "",
+        qr: project.qr || "",
+        sl: project.sl || "",
+        dt: project.dt || "",
+        p1: project.p1 || "",
+        p2: project.p2 || "",
+        p3: project.p3 || "",
+      };
     },
     showCostDialog(project) {
-      this.selectedProject = project
-      this.showCost = true
+      this.selectedProject = project;
+      this.showCost = true;
 
       // 初始化表单
       this.costForm = {
-        dnc: '',
-        q: '',
-        cityname: '',
-        rsklevel: '',
-      }
+        dnc: "",
+        q: "",
+        cityname: "",
+        rsklevel: "",
+      };
 
       // 获取城市列表
-      this.fetchCities()
+      this.fetchCities();
     },
     async fetchCities() {
       try {
-        const response = await fetch('http://118.202.10.11:8080/listcity')
-        const data = await response.json()
+        const response = await fetch("http://118.202.10.11:8080/listcity");
+        const data = await response.json();
         if (data.isok) {
-          this.citiesList = data.lists
+          this.citiesList = data.lists;
         }
       } catch (error) {
-        console.error('Error fetching cities:', error)
+        console.error("Error fetching cities:", error);
       }
     },
     async submitWorkloadForm() {
       // 将表单数据中的所有字段转换为数字
-      const formData = {}
+      const formData = {};
       for (const key in this.workloadForm) {
-        formData[key] = parseFloat(this.workloadForm[key]) || 0
+        formData[key] = parseFloat(this.workloadForm[key]) || 0;
       }
 
       // 构建请求体，包括选中项目和表单数据
@@ -633,112 +813,125 @@ export default {
         ...this.selectedProject,
         ...formData,
         id: this.selectedProject.projid,
-      }
+      };
 
       try {
-        const url = `http://118.202.10.11:8080/calae?id=${this.selectedProject.projid}`
+        const url = `http://118.202.10.11:8080/calae?id=${this.selectedProject.projid}`;
         const response = await fetch(url, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(payload),
-        })
-        const data = await response.json()
+        });
+        const data = await response.json();
         if (data.isok) {
-          alert('工作量评估提交成功')
+          alert("工作量评估提交成功");
           // 更新项目的工作量
-          this.selectedProject.ae = data.ae
-          this.showWorkload = false
+          this.selectedProject.ae = data.ae;
+          this.showWorkload = false;
         } else {
-          alert('工作量评估提交失败')
+          alert("工作量评估提交失败");
         }
       } catch (error) {
-        console.error('Error submitting workload form:', error)
-        alert('工作量评估提交失败')
+        console.error("Error submitting workload form:", error);
+        alert("工作量评估提交失败");
       }
     },
     async submitCostForm() {
       // 获取表单数据
-      const id = this.selectedProject.projid
-      const dnc = parseFloat(this.costForm.dnc) || 0
-      const q = this.costForm.q
-      const cityname = this.costForm.cityname
-      const rsklevel = this.costForm.rsklevel
+      const id = this.selectedProject.projid;
+      const dnc = parseFloat(this.costForm.dnc) || 0;
+      const q = this.costForm.q;
+      const cityname = this.costForm.cityname;
+      const rsklevel = this.costForm.rsklevel;
 
       try {
         // 构建 URL 查询参数
-        const url = `http://118.202.10.11:8080/calesdc?id=${id}&dnc=${dnc}&q=${encodeURIComponent(q)}&cityname=${encodeURIComponent(cityname)}&rsklevel=${encodeURIComponent(rsklevel)}`
+        const url = `http://118.202.10.11:8080/calesdc?id=${id}&dnc=${dnc}&q=${encodeURIComponent(
+          q
+        )}&cityname=${encodeURIComponent(
+          cityname
+        )}&rsklevel=${encodeURIComponent(rsklevel)}`;
         const response = await fetch(url, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-        })
-        const data = await response.json()
+        });
+        const data = await response.json();
         if (data.isok) {
-          alert('造价评估提交成功')
+          alert("造价评估提交成功");
           // 更新项目的估算造价
-          this.selectedProject.esdc = data.esdc
-          this.showCost = false
+          this.selectedProject.esdc = data.esdc;
+          this.showCost = false;
         } else {
-          alert('造价评估提交失败')
+          alert("造价评估提交失败");
         }
       } catch (error) {
-        console.error('Error submitting cost form:', error)
-        alert('造价评估提交失败')
+        console.error("Error submitting cost form:", error);
+        alert("造价评估提交失败");
       }
     },
     async fetchHistoryWorkloads(id) {
       try {
-        const response = await fetch(`http://118.202.10.11:8080/listae?id=${id}`)
-        const data = await response.json()
+        const response = await fetch(
+          `http://118.202.10.11:8080/listae?id=${id}`
+        );
+        const data = await response.json();
         if (data.isok) {
-          this.historyWorkloads = data.aes
+          this.historyWorkloads = data.aes;
         }
       } catch (error) {
-        console.error('Error fetching history workloads:', error)
+        console.error("Error fetching history workloads:", error);
       }
     },
     async fetchHistoryCosts(id) {
       try {
-        const response = await fetch(`http://118.202.10.11:8080/listesdc?id=${id}`)
-        const data = await response.json()
+        const response = await fetch(
+          `http://118.202.10.11:8080/listesdc?id=${id}`
+        );
+        const data = await response.json();
         if (data.isok) {
-          this.historyCosts = data.esdcs
+          this.historyCosts = data.esdcs;
         }
       } catch (error) {
-        console.error('Error fetching history costs:', error)
+        console.error("Error fetching history costs:", error);
       }
     },
     showHistoryDialog(project) {
-      this.selectedProject = project
-      this.showHistory = true
-      this.activeTab = 'workload'
-      this.fetchHistoryWorkloads(project.projid)
-      this.fetchHistoryCosts(project.projid)
+      this.selectedProject = project;
+      this.showHistory = true;
+      this.activeTab = "workload";
+      this.fetchHistoryWorkloads(project.projid);
+      this.fetchHistoryCosts(project.projid);
     },
     formatNumber(num) {
-      return num?.toLocaleString('zh-CN')
+      return num?.toLocaleString("zh-CN");
     },
     nextPage() {
-      this.pageNum++
-      this.fetchProjects()
+      this.fetchMaxPage();
+      if (this.pageNum < this.maxPage) {
+    this.pageNum++;
+    this.fetchProjects();
+  }
     },
     prevPage() {
+      this.fetchMaxPage();
       if (this.pageNum > 1) {
-        this.pageNum--
-        this.fetchProjects()
+        this.pageNum--;
+        this.fetchProjects();
       }
     },
     downloadProject(url) {
-      window.open(url, '_blank')
+      window.open(url, "_blank");
     },
   },
   mounted() {
-    this.fetchProjects()
+    this.fetchMaxPage();
+    this.fetchProjects();
   },
-}
+};
 </script>
 
 <style>
