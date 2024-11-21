@@ -26,7 +26,7 @@
       <!-- GSC已调整功能点数 -->
       <el-col :span="8">
         <div class="statistic-card">
-          <el-statistic :value=systemStore.adjustedFP1>
+          <el-statistic :value="systemStore.adjustedFP1" :formatter="formatToTwoDecimals">
             <template #title>
               <div style="display: inline-flex; align-items: center">
                 调整功能点数v1
@@ -109,9 +109,15 @@
       </el-table-column>
     </el-table>
     <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+      <el-button type="success":loading="loading"@click="fetchDIFromModel"style="margin-right: 8px; width: 150px;">
+    获取大模型 DI 值
+  </el-button>
       <el-button type="primary" style="margin-right: 8px;width: 90px;" @click="updateGSC">确定修改</el-button>
       <el-button @click="dialogTable1Visible=false" style="width: 90px;">取  消</el-button>
     </div>
+    <!-- 在 GSC 功能点统计卡片区域添加按钮 -->
+
+
   </el-dialog>
 
    <!-- 规模变更因子弹窗 -->
@@ -183,6 +189,10 @@ const gscTableData = ref<{
   vaf: number;
   dfp: number;
 }[]>([]);
+// 添加格式化方法
+const formatToTwoDecimals = (value: number) => {
+  return value ? value.toFixed(1) : '0.0'; // 保留两位小数
+};
 
 //获取gsc数据
 const fetchData = async () => {
@@ -283,6 +293,43 @@ const updateGSC = async () => {
     console.error("更新失败：", error);
   }
 };
+const loading = ref(false); // 加载状态
+
+// 修改 fetchDIFromModel 方法
+const fetchDIFromModel = async () => {
+  loading.value = true; // 设置加载状态为 true
+  try {
+    // 调用后端接口，传入当前系统 ID
+    const response = await axios.post("http://localhost:9000/gsc/invokeForDI", {
+      systemID: systemStore.systemID, // 当前系统 ID
+    });
+
+    const { isOk, msg } = response.data;
+
+    if (isOk) {
+      // 成功后重新加载 GSC 数据
+      await fetchData();
+      ElMessage({
+        message: "DI 值已成功更新并加载到页面！",
+        type: "success",
+      });
+    } else {
+      ElMessage({
+        message: msg || "更新 DI 值失败，请稍后重试",
+        type: "error",
+      });
+    }
+  } catch (error) {
+    console.error("获取 DI 值失败：", error);
+    ElMessage({
+      message: "系统错误，请稍后重试",
+      type: "error",
+    });
+  } finally {
+    loading.value = false; // 设置加载状态为 false
+  }
+};
+
 
 //规模变更因子
 
