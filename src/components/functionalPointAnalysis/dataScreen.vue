@@ -1,13 +1,13 @@
 <template>
   <!-- 三个数据展示 -->
-    <el-row :gutter="16" style="margin-bottom: 30px;margin-top: 20px;">
+    <el-row :gutter="16" style="margin-bottom: 80px;margin-top: 20px;margin-right: 20px;margin-left: 20px;">
       <!-- 未调整功能点数 -->
       <el-col :span="8">
         <div class="statistic-card">
           <!-- gscTableData[0]?.ufp || 0 -->
           <el-statistic :value=ufpStore.UFP>
             <template #title>
-              <div style="display: inline-flex; align-items: center">
+              <div  class="statistic-title" style="display: inline-flex; align-items: center">
                 未调整功能点数
                 <el-tooltip
                   effect="dark"
@@ -28,7 +28,7 @@
         <div class="statistic-card">
           <el-statistic :value="systemStore.adjustedFP1" :formatter="formatToTwoDecimals">
             <template #title>
-              <div style="display: inline-flex; align-items: center">
+              <div  class="statistic-title" style="display: inline-flex; align-items: center">
                 调整功能点数v1
                 <el-tooltip
                   effect="dark"
@@ -44,7 +44,7 @@
           </el-statistic>
           <div class="statistic-footer">
             <div class="footer-item">
-              <el-button type="primary" @click.prevent = "dialogTable1Visible = true">更改GSC</el-button>
+              <el-button type="primary" @click.prevent = "dialogTable1Visible = true">确定GSC权值</el-button>
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@
         <div class="statistic-card">
           <el-statistic :value=systemStore.adjustedFP2>
             <template #title>
-              <div style="display: inline-flex; align-items: center">
+              <div  class="statistic-title" style="display: inline-flex; align-items: center">
                 调整功能点数v2
                 <el-tooltip
                   effect="dark"
@@ -80,7 +80,7 @@
     <!-- 功能点表格和饼状图 -->
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
       <!-- 功能点表格 -->
-      <el-table :data="tableData" border show-summary style="width: 500px">
+      <el-table :data="tableData" border show-summary style="width: 280px;margin-left: 80px;margin-right: 60px;box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);">
         <el-table-column prop="name" label="功能点类型" />
         <el-table-column prop="amount" sortable label="数量" />
       </el-table>
@@ -109,7 +109,7 @@
       </el-table-column>
     </el-table>
     <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
-      <el-button type="success":loading="loading"@click="fetchDIFromModel"style="margin-right: 8px; width: 150px;">
+      <el-button type="success":loading="loading"@click="fetchDIFromModel"style="margin-right: 8px; width: 130px;">
     获取大模型 DI 值
   </el-button>
       <el-button type="primary" style="margin-right: 8px;width: 90px;" @click="updateGSC">确定修改</el-button>
@@ -509,7 +509,11 @@ const tableData: Product[] = [
 .statistic-card {
   height: 100%;
   padding: 20px;
+  margin-top: 20px;
   border-radius: 4px;
+  margin-left: 20px;
+  margin-right: 20px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
   background-color: var(--el-bg-color-overlay);
 }
 
@@ -541,7 +545,12 @@ const tableData: Product[] = [
 .red {
   color: var(--el-color-error);
 }
-
+.statistic-title {
+  display: inline-flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+}
 .el-row {
   margin-bottom: 20px;
 }

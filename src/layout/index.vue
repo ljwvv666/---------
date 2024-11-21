@@ -16,18 +16,20 @@
         <!-- 标签页位置 -->
         <div class="tags-view-wrapper">
           <el-scrollbar class="scroll-container">
-            <div class="tags-view">
-              <span
+            <div class="tags-view-container">
+              <el-tag
                 v-for="tag in tags"
                 :key="tag.path"
-                :class="['tags-view-item', { active: tag.path === $route.path }]"
+                :effect="tag.path === $route.path ? 'light' : 'plain'"
+                :class="['tag-item', { active: tag.path === $route.path }]"
                 @click="handleTagClick(tag)"
+                
               >
                 {{ tag.name }}
                 <el-icon class="close-icon" @click.stop="removeTag(tag)">
                   <close />
                 </el-icon>
-              </span>
+              </el-tag>
             </div>
           </el-scrollbar>
         </div>
@@ -117,7 +119,20 @@ html, body, .app-wrapper {
   height: calc(100vh - 60px); /* 剩余高度 */
   display: flex;
 }
-
+.tags-view-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 0;
+  padding-bottom: 2px;
+  padding-left: 10px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05); /* 添加阴影效果 */
+  border-radius: 3px; /* 设置圆角 */
+  width: 100vw; /* 自适应宽度 */
+}
+.tag-item {
+  margin: 3px;
+  height: 26px;
+}
 .sidebar-container {
   background-color: #545c64;
   color: #fff;
@@ -163,7 +178,9 @@ html, body, .app-wrapper {
   align-items: center;
   margin-bottom: 3px;
 }
-
+.tag-item {
+  margin: 3px;
+}
 .tags-view-item {
   display: inline-flex;
   align-items: center;

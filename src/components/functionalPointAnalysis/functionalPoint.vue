@@ -2,13 +2,14 @@
   <div id="show_FP">
 
     <!-- 对所有信息的展示 -->
-    <div id="allInfo" v-show="isShow == 1" style="margin-bottom: 20px;">
+    <div id="allInfo" v-show="isShow == 1" style="margin-bottom: 20px;margin-left: 40px;width: 90%;margin-top: 10px;">
       <el-table
         :data="tableData"
         row-key="id"
         border
         show-summary
         ref="allInfoRef"
+        
       >
         <el-table-column width="70" label="序号" >
           <template #default="scope">
@@ -16,21 +17,21 @@
             <span >{{ scope.row.index }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="子系统" width="110">
+        <el-table-column label="子系统" width="115">
           <template #default="scope">
             <!-- 判断如果当前行和前一行的子系统名称相同，则不显示 -->
             <span v-if="scope.row.isFirstInSubSystem">{{ scope.row.subSystem }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="模块" width="110">
+        <el-table-column label="模块" width="115">
           <template #default="scope">
             <!-- 判断如果当前行和前一行的模块名称相同，则不显示 -->
             <span v-if="scope.row.isFirstInModule">{{ scope.row.module }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="fpn" label="功能点名称" width="150"></el-table-column>
-        <el-table-column prop="fpd" label="功能点描述" width="300"></el-table-column>
-        <el-table-column prop="type" label="功能类型" width="100">
+        <el-table-column prop="fpd" label="功能点描述" width="400"></el-table-column>
+        <el-table-column prop="type" label="功能类型" width="110">
           <template #default="scope">
             <el-select
               v-model="scope.row.type"
@@ -47,7 +48,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="complexity" label="复杂度" width="100">
+        <el-table-column prop="complexity" label="复杂度" width="110">
           <template #default="scope">
             <el-select
               v-model="scope.row.complexity"
@@ -64,7 +65,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="ufp" label="UFP" width="70"></el-table-column>
+        <el-table-column prop="ufp" label="UFP" width="80"></el-table-column>
 
         <el-table-column label="操作">
           <template #default="scope">
@@ -79,7 +80,7 @@
       </el-table>
     </div>
 
-    <div style="display: flex; justify-content: flex-end;">
+    <div style="display: flex;margin-right: 105px; justify-content: flex-end;">
       <el-button type="primary" @click="viewResult">确认无误，查看结果</el-button>
     </div>
     <div v-show="isShow == 0">

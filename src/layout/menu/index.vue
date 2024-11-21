@@ -9,53 +9,42 @@
     @open="handleOpen"
     @close="handleClose"
   >
-    <el-sub-menu index="1" @click="project">
+    <el-menu-item index="1" @click="project">
       <template #title>
-        <el-icon><location /></el-icon>
+        <el-icon><DocumentCopy /></el-icon>
         <span>项目管理</span>
       </template>
-    </el-sub-menu>
+    </el-menu-item>
     <el-sub-menu index="2" >
       <template #title >
-        <el-icon><location /></el-icon>
+        <el-icon><Document /></el-icon>
         <span>功能点分析</span>
       </template>
       <el-menu-item index="2-1" @click="uploadFile">
-        <el-icon><User /></el-icon>上传文件
+        <el-icon><MessageBox /></el-icon>上传文件
       </el-menu-item>
       <el-menu-item index="2-2" @click="viewFP">
-        <el-icon><House /></el-icon>功能点明细
+        <el-icon><List /></el-icon>功能点明细
       </el-menu-item>
       <el-menu-item index="2-3" @click="dataScreen">
-        <el-icon><House /></el-icon>结果呈现
+        <el-icon><PieChart /></el-icon>结果呈现
       </el-menu-item>
     </el-sub-menu>
 
     <el-sub-menu index="3" >
       <template #title>
-        <el-icon><location /></el-icon>
+        <el-icon><Coin /></el-icon>
         <span>造价综合评估</span>
       </template>
       <el-menu-item index="3-1" @click="price">
-        <el-icon><User /></el-icon>造价数据计算
+        <el-icon><SetUp /></el-icon>造价数据计算
       </el-menu-item>
       <el-menu-item index="3-2" @click="analyseCost">
-        <el-icon><User /></el-icon>团队PDR分析
+        <el-icon><DataAnalysis /></el-icon>团队PDR分析
       </el-menu-item>
 
     </el-sub-menu>
-    <el-sub-menu index="4">
-      <template #title>
-        <el-icon><location /></el-icon>
-        <span>个人信息管理</span>
-      </template>
-      <el-menu-item index="4-1" >
-        <el-icon><User /></el-icon>基本资料
-      </el-menu-item>
-      <el-menu-item index="4-2" >
-        <el-icon><House /></el-icon>密码修改
-      </el-menu-item>
-    </el-sub-menu>
+    
 
   </el-menu>
 </template>
