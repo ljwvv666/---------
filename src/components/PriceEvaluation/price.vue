@@ -111,7 +111,7 @@
                     v-else
                     type="info"
                     size="small"
-                    style="flex-shrink: 0"
+                    style="flex-shrink: 0; margin-left: 100px"
                   >
                     未开始
                   </el-tag>
@@ -216,7 +216,7 @@
         <span class="text-lg font-semibold" style="margin: 0 1rem"
           >第 {{ pageNum }} 页</span
         >
-        <el-button @click="nextPage" type="primary" plain size="mini">
+        <el-button @click="nextPage" type="primary" plain size="mini" :disabled="pageNum === maxPage">
           下一页
         </el-button>
       </div>
@@ -640,6 +640,7 @@ export default {
       activeTab: "workload", // 'workload' or 'cost'
       pageNum: 1,
       pageSize: 6,
+      maxPage: 1, // 最大页数
       name: "HistoryModal",
       qualityLevels: [
         {
@@ -678,6 +679,20 @@ export default {
     };
   },
   methods: {
+    async fetchMaxPage() {
+      try {
+        const response = await fetch("http://118.202.10.11:8080/maxpage");
+        const data = await response.json();
+        if (data.isok) {
+          this.maxPage = data.num;
+        } else {
+          this.maxPage = 1;
+        }
+      } catch (error) {
+        console.error("Error fetching maxPage:", error);
+        this.maxPage = 1;
+      }
+    },
     async fetchProjects() {
       this.loading = true;
       try {
@@ -687,12 +702,14 @@ export default {
         const data = await response.json();
         if (data.isok) {
           this.projects = data.lists;
+          this.maxPage = data.maxpage;
         } else {
           this.projects = [];
         }
       } catch (error) {
         console.error("Error fetching projects:", error);
         this.projects = [];
+        this.maxPage = 1;
       } finally {
         this.loading = false;
       }
@@ -707,15 +724,19 @@ export default {
         if (data.isok) {
           if (data.proj) {
             this.projects = [data.proj];
+            this.maxPage = 1;
           } else {
             this.projects = [];
+            this.maxPage = 1;
           }
         } else {
           this.projects = [];
+          this.maxPage = 1;
         }
       } catch (error) {
         console.error("Error searching projects:", error);
         this.projects = [];
+        this.maxPage = 1;
       } finally {
         this.loading = false;
       }
@@ -732,6 +753,7 @@ export default {
       this.searchTerm = "";
       this.pageNum = 1;
       this.fetchProjects();
+      this.fetchMaxPage();
       this.isSearching = false;
     },
     showWorkloadDialog(project) {
@@ -888,10 +910,14 @@ export default {
       return num?.toLocaleString("zh-CN");
     },
     nextPage() {
-      this.pageNum++;
-      this.fetchProjects();
+      this.fetchMaxPage();
+      if (this.pageNum < this.maxPage) {
+    this.pageNum++;
+    this.fetchProjects();
+  }
     },
     prevPage() {
+      this.fetchMaxPage();
       if (this.pageNum > 1) {
         this.pageNum--;
         this.fetchProjects();
@@ -902,6 +928,7 @@ export default {
     },
   },
   mounted() {
+    this.fetchMaxPage();
     this.fetchProjects();
   },
 };
