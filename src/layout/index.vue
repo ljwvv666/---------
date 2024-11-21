@@ -2,7 +2,7 @@
 <template>
   <el-container class="app-wrapper" style="width: 100vw">
     <el-header class="header" height="150px">
-        <Header />
+      <Header />
     </el-header>
     <el-container class="container">
       <el-aside
@@ -13,7 +13,7 @@
         <Menu />
       </el-aside>
       <el-main class="main">
-        <!-- 标签页位置 -->
+        <!-- 标签页 -->
         <div class="tags-view-wrapper">
           <el-scrollbar class="scroll-container">
             <div class="tags-view">
@@ -31,35 +31,38 @@
             </div>
           </el-scrollbar>
         </div>
-        <RouterView/>
+        <!-- 页面内容 -->
+        <RouterView />
       </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script setup lang="ts">
-import {RouterView,RouterLink} from 'vue-router'
 import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { Close } from "@element-plus/icons-vue";
 import Menu from "./menu/index.vue";
-import Header from "./header/index.vue"
-import HomePage from "@/components/homepage.vue"
-// const tabPosition = ref<TabsInstance['tabPosition']>('left')
-  const tags = ref<{ name: string; path: string }[]>([]); // 标签数据
-  const router = useRouter();
-  const route = useRoute();
-// 动态添加标签
+import Header from "./header/index.vue";
+
+const tags = ref<{ name: string; path: string }[]>([]); // 标签数据
+const router = useRouter();
+const route = useRoute();
+
+// 添加标签
 const addTag = (name: string, path: string) => {
-  const exists = tags.value.find((tag) => tag.path === path);
-  if (!exists) {
+  if (!tags.value.find((tag) => tag.path === path)) {
     tags.value.push({ name, path });
   }
 };
 
-// 点击标签切换路由
+// 点击标签
 const handleTagClick = (tag: { name: string; path: string }) => {
-  router.push(tag.path);
+  if (tag.path !== route.path) {
+    router.push(tag.path).catch((err) => {
+      if (err.name !== "NavigationDuplicated") console.error(err);
+    });
+  }
 };
 
 // 删除标签
@@ -68,21 +71,25 @@ const removeTag = (tag: { name: string; path: string }) => {
   if (index !== -1) {
     tags.value.splice(index, 1);
     if (route.path === tag.path) {
-      // 如果移除的是当前页面标签，则切换到上一个标签或首页
       const nextTag = tags.value[index - 1] || tags.value[0];
-      router.push(nextTag?.path || "/");
+      router.push(nextTag?.path || "/index");
     }
   }
 };
 
-// 监听路由变化
+// 初始化
 onMounted(() => {
+  // 默认标签
+  addTag("首页", "/index");
+
+  // 路由变化监听
   router.beforeEach((to, from, next) => {
-    addTag(to.meta.title || to.name || to.path, to.path); // 使用 `meta.title` 或 `name`
+    addTag(to.meta.title || to.name || to.path, to.path);
     next();
   });
 });
 </script>
+
 
 <style scoped>
 /* 使容器和子元素扩展到整个页面 */
