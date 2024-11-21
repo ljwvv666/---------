@@ -306,6 +306,16 @@
               placeholder="背景因子"
             />
           </el-form-item>
+
+          <el-form-item label="PDR" prop="pdr">
+            <el-input-number
+              v-model="workloadForm.pdr"
+              :min="0"
+              :precision="2"
+              controls-position="right"
+              placeholder="PDR"
+            />
+          </el-form-item>
         </div>
 
         <div class="dialog-footer">
@@ -624,9 +634,7 @@ export default {
         qr: "",
         sl: "",
         dt: "",
-        p1: "",
-        p2: "",
-        p3: "",
+        pdr: "",
       },
       costForm: {
         dnc: "",
@@ -770,9 +778,7 @@ export default {
         qr: project.qr || "",
         sl: project.sl || "",
         dt: project.dt || "",
-        p1: project.p1 || "",
-        p2: project.p2 || "",
-        p3: project.p3 || "",
+        pdr: project.pdr || "",
       };
     },
     showCostDialog(project) {
