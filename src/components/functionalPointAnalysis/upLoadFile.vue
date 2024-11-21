@@ -102,13 +102,11 @@ const viewFP = async () => {
 // 上传成功回调
 const handleUploadSuccess = (response: any, file: any) => {
   console.log("Upload Success:", response, file);
-  ElMessage.success("文件上传成功");
 };
 
 // 上传失败回调
 const handleUploadError = (error: any, file: any) => {
   console.error("Upload Error:", error, file);
-  ElMessage.error("文件上传失败");
 };
 
 // 上传前验证文件
