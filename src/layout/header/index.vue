@@ -1,6 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="navbar">
+    <img src="/src/assets/image/111.png" alt="Logo" class="logo" />
     <div class="title"><h2>软件造价评估系统</h2></div>
     <Breadcrumb />
     <div class="navbar-right">
@@ -18,6 +19,12 @@ import avatar from "./components/avatar.vue";
 <style>
 .title {
   margin-right: 60px;
+}
+.logo {
+  width: 40px; /* 设置图片宽度 */
+  height: 40px; /* 设置图片高度 */
+  margin-right: 5px; /* 图片和文字之间的间距 */
+  object-fit: contain; /* 确保图片保持比例 */
 }
 .navbar {
   width: 100%;

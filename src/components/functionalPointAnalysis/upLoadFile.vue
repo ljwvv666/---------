@@ -1,8 +1,8 @@
 <template>
 
-    <el-button type="primary" style="margin-bottom: 20px;width: 90px;" @click="downloadFile">下载模板</el-button>
+    <el-button type="primary" style="margin-bottom: 30px;width: 90px;margin-top: 10px;" @click="downloadFile">下载模板</el-button>
     <!-- 注意事项 -->
-    <el-card style="max-width: 680px; margin-bottom: 20px;">
+    <el-card style="max-width: 680px; margin-bottom: 40px;">
         <template #header>
         <div class="card-header">
             <span>Excel模板上传的注意事项</span>
@@ -32,6 +32,7 @@
       :limit="1"
       :on-exceed="handleExceed"
       accept=".xls,.xlsx"
+      style="margin-bottom: 30px;"
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
       <div class="el-upload__text">
@@ -83,7 +84,7 @@ const reload = () => {
 //同时还要add一个gsc表 传一个sysId
 const viewFP = async () => {
   try {
-    const response = await axios.get('https://92eb484a-22bf-43a3-b3a5-4b112fa53107.mock.pstmn.io/func/list'); 
+    const response = await axios.get('http://localhost:9000/func/list'); 
     systemStore.setSystemID(response.data.info[0].systemID);
   } catch (error) {
     console.error('获取 System ID 失败:', error);

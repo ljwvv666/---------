@@ -50,6 +50,9 @@ const breadcrumbs = computed(() => {
       case "price":
         text = "造价综合评估";
         break;
+      case "project":
+        text = "项目管理";
+        break;
       // 添加其他路由的自定义中文名称
       default:
         text = path;

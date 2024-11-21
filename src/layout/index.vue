@@ -11,15 +11,27 @@
         class="sidebar-container"
       >
         <Menu />
-        <!-- <RouterView name="aside"></RouterView> -->
       </el-aside>
       <el-main class="main">
-        <!-- <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-          <el-tab-pane label="上传文件" name="first"></el-tab-pane>
-          <el-tab-pane label="功能点明细" name="second"></el-tab-pane>
-          <el-tab-pane label="结果呈现" name="third"></el-tab-pane>
-        </el-tabs> -->
-        <RouterView></RouterView>
+        <!-- 标签页位置 -->
+        <div class="tags-view-wrapper">
+          <el-scrollbar class="scroll-container">
+            <div class="tags-view">
+              <span
+                v-for="tag in tags"
+                :key="tag.path"
+                :class="['tags-view-item', { active: tag.path === $route.path }]"
+                @click="handleTagClick(tag)"
+              >
+                {{ tag.name }}
+                <el-icon class="close-icon" @click.stop="removeTag(tag)">
+                  <close />
+                </el-icon>
+              </span>
+            </div>
+          </el-scrollbar>
+        </div>
+        <RouterView/>
       </el-main>
     </el-container>
   </el-container>
@@ -27,11 +39,49 @@
 
 <script setup lang="ts">
 import {RouterView,RouterLink} from 'vue-router'
-
+import { onMounted, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { Close } from "@element-plus/icons-vue";
 import Menu from "./menu/index.vue";
 import Header from "./header/index.vue"
 import Main from "@/components/UserManagement.vue"
 // const tabPosition = ref<TabsInstance['tabPosition']>('left')
+  const tags = ref<{ name: string; path: string }[]>([]); // 标签数据
+  const router = useRouter();
+  const route = useRoute();
+// 动态添加标签
+const addTag = (name: string, path: string) => {
+  const exists = tags.value.find((tag) => tag.path === path);
+  if (!exists) {
+    tags.value.push({ name, path });
+  }
+};
+
+// 点击标签切换路由
+const handleTagClick = (tag: { name: string; path: string }) => {
+  router.push(tag.path);
+};
+
+// 删除标签
+const removeTag = (tag: { name: string; path: string }) => {
+  const index = tags.value.findIndex((t) => t.path === tag.path);
+  if (index !== -1) {
+    tags.value.splice(index, 1);
+    if (route.path === tag.path) {
+      // 如果移除的是当前页面标签，则切换到上一个标签或首页
+      const nextTag = tags.value[index - 1] || tags.value[0];
+      router.push(nextTag?.path || "/");
+    }
+  }
+};
+
+// 监听路由变化
+onMounted(() => {
+  router.beforeEach((to, from, next) => {
+    addTag(to.meta.title || to.name || to.path, to.path); // 使用 `meta.title` 或 `name`
+    next();
+  });
+});
 </script>
 
 <style scoped>
@@ -82,7 +132,7 @@ html, body, .app-wrapper {
 .main {
   margin-left: 210px; /* 为固定的 Sidebar 腾出空间 */
   background-color: #f2f2f2;
-  padding: 20px;
+  padding: 8px;
   height: calc(100vh - 60px); /* 确保占满剩余高度 */
   box-sizing: border-box; /* 确保 padding 不影响布局 */
   display: flex;
@@ -93,4 +143,55 @@ html, body, .app-wrapper {
   overflow: hidden; /* 当内容为空时禁用滚动 */
 }
 
+.tags-view-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 1px;
+  background: #f5f5f5;
+  border-bottom: 2px solid #ddd;
+}
+
+.scroll-container {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+.tags-view {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 3px;
+}
+
+.tags-view-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 6px;
+  margin: 0 4px;
+  font-size: 14px;
+  color: #333;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tags-view-item.active {
+  color: #fff;
+  background: rgb(64, 158, 255);
+  border-color: rgb(64, 158, 255);
+}
+
+.close-icon {
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.close-icon:hover {
+  color: #ff4d4f;
+}
 </style>
