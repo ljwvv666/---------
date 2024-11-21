@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    欢迎您  
+    欢迎您，软件造价评估师  
     <el-dropdown>
       <span class="el-dropdown-link">
         <el-avatar :size="50" :src="circleUrl" style="margin-left: 12px;"/>
