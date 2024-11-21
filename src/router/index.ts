@@ -20,6 +20,11 @@ const router = createRouter({
       component: () => import('@/layout/index.vue'),
       children:[
         {
+          path: '', // 默认子路由，path 为空
+          name: '首页', // 设置一个名称
+          component: () => import('@/components/homepage.vue'), // 默认加载的组件
+        },
+        {
           path:'uploadFile',
           name:'上传文件',
           component: () => import('@/components/functionalPointAnalysis/upLoadFile.vue'),
