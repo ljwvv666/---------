@@ -31,11 +31,17 @@
       </el-menu-item>
     </el-sub-menu>
 
-    <el-sub-menu index="3" @click="price">
+    <el-sub-menu index="3" >
       <template #title>
         <el-icon><location /></el-icon>
         <span>造价综合评估</span>
       </template>
+      <el-menu-item index="3-1" @click="price">
+        <el-icon><User /></el-icon>造价数据计算
+      </el-menu-item>
+      <el-menu-item index="3-2" @click="analyseCost">
+        <el-icon><User /></el-icon>团队PDR分析
+      </el-menu-item>
 
     </el-sub-menu>
     <el-sub-menu index="4">
@@ -81,9 +87,14 @@ const price = () => {
   router.push('/index/price');
 };
 
+const analyseCost = () => {
+  router.push('/index/pdrscreen');
+}
+
 const project = () => {
   router.push('/index/project');
 }
+
 
 </script>
 

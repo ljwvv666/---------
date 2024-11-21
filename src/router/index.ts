@@ -40,6 +40,11 @@ const router = createRouter({
           component: () => import('@/components/PriceEvaluation/price.vue'),
         },
         {
+          path:'pdrscreen',
+          name:'团队PDR分析',
+          component: () => import('@/components/PriceEvaluation/pdrscreen.vue'),
+        },
+        {
           path:'project',
           name:'项目管理',
           component: () => import('@/components/Management/ProjectManagement.vue'),
