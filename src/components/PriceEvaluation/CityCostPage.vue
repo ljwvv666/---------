@@ -20,6 +20,9 @@
       <div class="map-container">
         <div class="map-header">
           <h2 class="map-title">城市人月基准单价分布图</h2>
+          <button @click="toggleView" class="action-button btn-secondary">
+            切换视图
+          </button>
           <div class="map-actions">
             <button class="action-button" @click="resetZoom">
               <i class="fas fa-compress-arrows-alt"></i> 重置视图
@@ -36,17 +39,13 @@
           <div class="update-form">
             <div class="form-group">
               <label for="city-select">选择城市</label>
-              <select 
-                v-model="selectedCity" 
+              <select
+                v-model="selectedCity"
                 id="city-select"
                 class="form-select"
               >
                 <option value="">请选择城市</option>
-                <option 
-                  v-for="city in cities" 
-                  :key="city.id" 
-                  :value="city.id"
-                >
+                <option v-for="city in cities" :key="city.id" :value="city.id">
                   {{ city.cityname }}
                 </option>
               </select>
@@ -56,7 +55,7 @@
               <label for="cost-input">基准金额</label>
               <div class="cost-input-wrapper">
                 <span class="currency-symbol">¥</span>
-                <input 
+                <input
                   v-model="newCost"
                   id="cost-input"
                   type="number"
@@ -67,7 +66,7 @@
               </div>
             </div>
 
-            <button 
+            <button
               @click="updateCityCost"
               class="submit-button"
               :disabled="!selectedCity || !newCost"
@@ -86,12 +85,12 @@
             </div>
             <div class="info-item">
               <span class="info-label">当前基准数据</span>
-              <span class="info-value">¥{{ selectedCityData.cost }}万元/人月</span>
+              <span class="info-value"
+                >¥{{ selectedCityData.cost }}万元/人月</span
+              >
             </div>
           </div>
-          <div class="empty-state" v-else>
-            请选择一个城市查看详细信息
-          </div>
+          <div class="empty-state" v-else>请选择一个城市查看详细信息</div>
         </div>
       </div>
     </div>
@@ -99,42 +98,53 @@
 </template>
 
 <script>
-import * as echarts from 'echarts';
+import * as echarts from "echarts";
 
 export default {
   data() {
     return {
       cities: [],
       selectedCity: null,
-      newCost: '',
+      newCost: "",
       chartInstance: null,
+      currentOption: "map", // 用来标记当前是显示地图还是直方图
+      isMapMode: true, // 默认显示地图模式
     };
   },
 
   computed: {
     selectedCityData() {
-      return this.cities.find(c => c.id === this.selectedCity);
+      return this.cities.find((c) => c.id === this.selectedCity);
     },
     averageCost() {
-      if (!this.cities.length) return '0.00';
-      const total = this.cities.reduce((sum, city) => sum + parseFloat(city.cost || 0), 0);
+      if (!this.cities.length) return "0.00";
+      const total = this.cities.reduce(
+        (sum, city) => sum + parseFloat(city.cost || 0),
+        0
+      );
       return (total / this.cities.length).toFixed(2);
-    }
+    },
   },
 
   mounted() {
     this.fetchCityData();
-    window.addEventListener('resize', this.handleResize);
+    window.addEventListener("resize", this.handleResize);
   },
 
   beforeUnmount() {
-    window.removeEventListener('resize', this.handleResize);
+    window.removeEventListener("resize", this.handleResize);
     if (this.chartInstance) {
       this.chartInstance.dispose();
     }
   },
 
   methods: {
+    // 切换视图
+    toggleView() {
+      this.isMapMode = !this.isMapMode; // 切换视图模式
+      this.renderChart(); // 重新渲染图表
+    },
+
     handleResize() {
       if (this.chartInstance) {
         this.chartInstance.resize();
@@ -143,93 +153,137 @@ export default {
 
     async fetchCityData() {
       try {
-        const response = await fetch('http://118.202.10.11:8080/listcity');
+        const response = await fetch("http://118.202.10.11:8080/listcity");
         const data = await response.json();
 
         if (data.isok) {
           this.cities = data.lists;
           this.renderChart();
         } else {
-          this.showNotification('错误', '数据加载失败', 'error');
+          this.showNotification("错误", "数据加载失败", "error");
         }
       } catch (error) {
-        this.showNotification('错误', '网络请求失败', 'error');
+        this.showNotification("错误", "网络请求失败", "error");
       }
     },
 
+    // 渲染图表
     renderChart() {
-      if (!this.cities.length) return;
+      if (!this.cities.length) {
+        console.error("城市数据为空，无法渲染图表");
+        return;
+      }
 
-      const chartDom = document.getElementById('chart');
+      const chartDom = document.getElementById("chart");
+      if (!chartDom) {
+        console.error("图表容器不存在");
+        return;
+      }
+
+      // 如果已经存在图表实例，销毁它
+      if (this.chartInstance) {
+        this.chartInstance.dispose();
+      }
+
       this.chartInstance = echarts.init(chartDom);
 
-      const cityData = this.cities.map(city => ({
+      // 数据格式化
+      const cityData = this.cities.map((city) => ({
         name: city.cityname,
-        value: parseFloat(city.cost) || 0,
+        value: parseFloat(city.cost) || 0, // 确保 cost 为数值
       }));
 
-      const values = cityData.map(d => d.value).filter(v => !isNaN(v));
+      console.log("City Data:", cityData);
+
+      // 计算 min 和 max
+      const values = cityData.map((d) => d.value).filter((v) => !isNaN(v));
       const min = Math.min(...values);
       const max = Math.max(...values);
 
+      console.log("Min:", min, "Max:", max);
+
+      if (isNaN(min) || isNaN(max)) {
+        console.error("Min 或 Max 值无效");
+        return;
+      }
+
+      // 图表配置
       const option = {
         tooltip: {
-          trigger: 'item',
-          formatter: '{b}<br/>成本: ¥{c}万元/人月',
+          trigger: "item",
         },
         visualMap: {
-          left: 'right',
-          min,
-          max,
+          left: "right",
+          min: min,
+          max: max,
           inRange: {
-            color: ['#e0f3f8', '#fee090', '#f46d43', '#a50026'],
+            color: ["#e0f3f8", "#fee090", "#f46d43", "#a50026"],
           },
-          text: ['高', '低'],
+          text: ["高", "低"],
           calculable: true,
-          dimension: 0,
         },
-        series: [{
-          name: '城市成本',
-          type: 'map',
-          map: 'china',
-          roam: true,
-          label: {
-            show: true,
-            fontSize: 10,
-          },
-          emphasis: {
+        series: [
+          {
+            name: "城市成本",
+            type: "map",
+            map: "china",
+            roam: true,
             label: {
               show: true,
-              fontSize: 12,
-              color: '#fff',
             },
-            itemStyle: {
-              areaColor: '#0d47a1',
-            }
+            data: cityData,
           },
-          data: cityData,
-        }]
+        ],
       };
 
-      fetch('https://raw.githubusercontent.com/lyhmyd1211/GeoMapData_CN/master/china.json')
-        .then(res => res.json())
-        .then(geoJson => {
-          echarts.registerMap('china', geoJson);
+      // 检查是否渲染地图，若是则隐藏坐标轴
+      if (this.isMapMode) {
+        // 地图模式下隐藏坐标轴
+        option.xAxis = { show: false };
+        option.yAxis = { show: false };
+      } else {
+        // 直方图模式下显示坐标轴
+        option.xAxis = {
+          type: "category",
+          data: cityData.map((d) => d.name), // 用城市名作为坐标轴标签
+        };
+        option.yAxis = {
+          type: "value",
+        };
+        option.series = [
+          {
+            name: "城市成本",
+            type: "bar", // 使用直方图
+            data: cityData.map((d) => d.value),
+          },
+        ];
+      }
+
+      // 加载地理数据并注册地图
+      fetch(
+        "https://raw.githubusercontent.com/lyhmyd1211/GeoMapData_CN/master/china.json"
+      )
+        .then((res) => res.json())
+        .then((geoJson) => {
+          echarts.registerMap("china", geoJson);
           this.chartInstance.setOption(option);
+        })
+        .catch((error) => {
+          console.error("地理JSON加载失败:", error);
         });
     },
 
     async updateCityCost() {
       if (!this.selectedCity || !this.newCost) return;
 
-      const city = this.cities.find(c => c.id === this.selectedCity);
+      const city = this.cities.find((c) => c.id === this.selectedCity);
       if (!city) return;
 
       try {
-        const response = await fetch('http://118.202.10.11:8080/updateCity', {
-          method: 'POST',
+        const response = await fetch("http://118.202.10.11:8080/updateCity", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             id: city.id,
@@ -242,29 +296,28 @@ export default {
         if (result.isok) {
           city.cost = parseFloat(this.newCost);
           this.renderChart();
-          this.showNotification('成功', '城市成本更新成功', 'success');
-          this.newCost = '';
+          this.showNotification("成功", "城市成本更新成功", "success");
+          this.newCost = "";
         } else {
-          this.showNotification('错误', '更新失败', 'error');
+          this.showNotification("错误", "更新失败", "error");
         }
       } catch (error) {
-        this.showNotification('错误', '网络请求失败', 'error');
+        this.showNotification("错误", "网络请求失败", "error");
       }
     },
 
     resetZoom() {
       if (this.chartInstance) {
         this.chartInstance.dispatchAction({
-          type: 'restore'
+          type: "restore",
         });
       }
     },
 
     showNotification(title, message, type) {
-      // 这里可以集成你喜欢的通知库
       alert(`${title}: ${message}`);
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -518,6 +571,20 @@ export default {
 
   .header-stats {
     justify-content: center;
+  }
+
+  /* 添加切换按钮的样式 */
+  .btn-secondary {
+    padding: 10px 15px;
+    background-color: #8e44ad;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .btn-secondary:hover {
+    background-color: #6c3483;
   }
 }
 </style>
