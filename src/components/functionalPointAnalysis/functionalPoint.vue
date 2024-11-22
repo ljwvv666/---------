@@ -219,7 +219,6 @@ console.log(fpn)
         fpn
       }
     }).then(res=>{
-    alert(res.data.msg);
     });
 
     // 刷新表格数据
@@ -227,7 +226,7 @@ console.log(fpn)
     
     // 删除成功后的提示
     ElMessage({
-      message: "111",
+      message: "删除成功",
       type: "success",
     });
 

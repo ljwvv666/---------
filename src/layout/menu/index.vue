@@ -36,14 +36,15 @@
         <el-icon><Coin /></el-icon>
         <span>造价综合评估</span>
       </template>
-      <el-menu-item index="3-1" @click="price">
-        <el-icon><SetUp /></el-icon>造价数据计算
-      </el-menu-item>
-      <el-menu-item index="3-2" @click="analyseCost">
+
+      <el-menu-item index="3-1" @click="analyseCost">
         <el-icon><DataAnalysis /></el-icon>团队PDR分析
       </el-menu-item>
-      <el-menu-item index="3-3" @click="cityCost">
+      <el-menu-item index="3-2" @click="cityCost">
         <el-icon><MapLocation /></el-icon>城市成本分布地图
+      </el-menu-item>
+      <el-menu-item index="3-3" @click="price">
+        <el-icon><SetUp /></el-icon>造价数据计算
       </el-menu-item>
 
     </el-sub-menu>
