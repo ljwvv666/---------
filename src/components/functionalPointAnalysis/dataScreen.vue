@@ -246,7 +246,6 @@ import { useSystemStore } from '@/stores/systemStore';
 import { useUfpStore } from "@/stores/ufpClass";
 import { ElMessage } from "element-plus";
 
-import { watch } from "vue";
 
 const dialogTable1Visible = ref(false);
 const dialogTable2Visible = ref(false)
@@ -255,21 +254,6 @@ const ufpStore = useUfpStore();
 
 const options = ref<{ label: string; value: string }[]>([]); // 下拉候选项
 const value = ref<string | null>(null); // 绑定的选中值
-
-
-// 监听 UFP 的变化
-watch(
-  () => ufpStore.UFP, // 确保这里返回的是响应式引用
-  async (newValue, oldValue) => {
-    console.log(`UFP 值发生变化：从 ${oldValue} 到 ${newValue}`);
-    if (newValue !== oldValue) {
-      await updateGSC(); // 调用更新 GSC 数据方法
-      await updateScale(); // 调用更新规模因子调整方法
-    }
-  }
-);
-
-
 
 // 明确指定 gscTableData 的类型
 const gscTableData = ref<{
@@ -297,7 +281,6 @@ const fetchData = async () => {
 });
 
     const rawData = response.data.data;
-    console.log(response.data)
     console.log(rawData)
     // 定义你的 GSC 映射
     const gscMapping = {
@@ -331,6 +314,7 @@ const fetchData = async () => {
         dfp: rawData.dfp || 0, // 填充 dfp
       };
     });
+console.log(gscTableData.value);
 
   } catch (error) {
     console.error("数据加载失败：", error);
@@ -340,25 +324,26 @@ const fetchData = async () => {
 //更新gsc数据
 const updateGSC = async () => {
   try {
+    console.log(gscTableData.value);
     // 1. 构造 JSON 数据
     const requestData = gscTableData.value.reduce((result, row) => {
       // 根据 GSC 名称映射到数据库字段名
-          const keyMapping = {
-              "数据通信": "diDataComm",
-              "分布式数据处理": "diDistDataProc",
-              "性能要求": "diPerformance",
-              "大量配置": "diHeavyConfig",
-              "事务速率": "diTransRate",
-              "在线数据输入": "diOnlineDataEntry",
-              "用户效率": "diUserEfficiency",
-              "在线更新": "diOnlineUpdate",
-              "复杂处理": "diComplexProc",
-              "可复用性": "diReusability",
-              "安装方便性": "diInstallEase",
-              "操作方便性": "diOperEase",
-              "多站点支持": "diMultipleSites",
-              "便于变更": "diFacilitateChange"
-    };
+       const keyMapping = {
+       "数据通信": "diDataComm",
+         "分布式数据处理": "diDistDataProc",
+        "性能要求": "diPerformance",
+       "大量配置": "diHeavyConfig",
+        "事务速率": "diTransRate",
+        "在线数据输入": "diOnlineDataEntry",
+        "用户效率": "diUserEfficiency",
+      "在线更新": "diOnlineUpdate",
+         "复杂处理": "diComplexProc",
+         "可复用性": "diReusability",
+        "安装方便性": "diInstallEase",
+       "操作方便性": "diOperEase",
+       "多站点支持": "diMultipleSites",
+       "便于变更": "diFacilitateChange"
+};
       // 将 GSC 转换为对应的数据库字段名并赋值
       const key = keyMapping[row.GSC];
       if (key) {
@@ -375,7 +360,7 @@ const updateGSC = async () => {
       vaf: gscTableData.value[0].vaf,
       dfp: gscTableData.value[0].dfp,
     });
-
+console.log(requestData);
     // 2. 发送 POST 请求
     const response = await axios.post("http://localhost:9000/gsc/update", requestData);
     systemStore.adjustedFP1 = response.data.data.dfp;
@@ -423,6 +408,72 @@ const fetchDIFromModel = async () => {
     });
   } finally {
     loading.value = false; // 设置加载状态为 false
+  }
+};
+const updateGSCWithoutUI = async () => {
+  try {
+    // 确保先加载数据
+    console.log("开始加载 GSC 数据...");
+    await fetchData();
+
+    // 如果数据为空或未正确加载，抛出错误
+    if (!gscTableData.value || gscTableData.value.length === 0) {
+      console.error("GSC 数据为空，无法更新");
+      return;
+    }
+
+    // 构造更新请求的数据结构
+    const requestData = gscTableData.value.reduce((result, row) => {
+      const keyMapping = {
+        "数据通信": "diDataComm",
+        "分布式数据处理": "diDistDataProc",
+        "性能要求": "diPerformance",
+        "大量配置": "diHeavyConfig",
+        "事务速率": "diTransRate",
+        "在线数据输入": "diOnlineDataEntry",
+        "用户效率": "diUserEfficiency",
+        "在线更新": "diOnlineUpdate",
+        "复杂处理": "diComplexProc",
+        "可复用性": "diReusability",
+        "安装方便性": "diInstallEase",
+        "操作方便性": "diOperEase",
+        "多站点支持": "diMultipleSites",
+        "便于变更": "diFacilitateChange",
+      };
+
+      // 转换字段名并填充值
+      const key = keyMapping[row.GSC];
+      if (key) {
+        result[key] = row.DI; // 填充对应的 DI 值
+      }
+      return result;
+    }, {
+      // 初始化全局字段
+      gscID: gscTableData.value[0]?.gscID,
+      systemID: gscTableData.value[0]?.systemID,
+      ufp: gscTableData.value[0]?.ufp,
+      cfp: gscTableData.value[0]?.cfp,
+      totalDI: gscTableData.value[0]?.totalDI,
+      vaf: gscTableData.value[0]?.vaf,
+      dfp: gscTableData.value[0]?.dfp,
+    });
+
+    console.log("构造的请求数据：", requestData);
+
+    // 发送更新请求
+    const response = await axios.post("http://localhost:9000/gsc/update", requestData);
+
+    // 更新本地 store 数据
+    systemStore.adjustedFP1 = response.data.data.dfp;
+
+    console.log("GSC 更新成功：", response.data.msg);
+    
+  } catch (error) {
+    console.error("GSC 更新失败：", error);
+    ElMessage({
+      message: "GSC 更新失败，请检查日志",
+      type: "error",
+    });
   }
 };
 
@@ -517,11 +568,13 @@ const updateScale = async () => {
 
 // 在组件挂载时获取数据
 onMounted(() => {
-  
-  updateGSC(); 
-  updateScale();
+
   fetchData();
+  updateGSCWithoutUI(); 
+  updateScale();
+  
   fetchOptions();
+   updateGSC();
   if (systemStore.standardName) {
     searchScaleByStandard(systemStore.standardName);
   }

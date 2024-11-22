@@ -7,7 +7,7 @@ import FunctionalPoint from "./components/functionalPointAnalysis/functionalPoin
 <template>
   <router-view />
   <div id="app">
-    <FunctionalPoint></FunctionalPoint>
+
 
   </div>
 </template>

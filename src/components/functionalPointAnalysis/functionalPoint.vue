@@ -127,7 +127,7 @@ const updateFTOrComplexity = async (row) => {
 
     // 更新成功后的提示
     ElMessage({
-      message: res.msg,
+      message: "数据更新成功！",
       type: "success",
     });
   } catch (error) {

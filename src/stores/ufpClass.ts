@@ -1,5 +1,5 @@
-import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
 
 export const useUfpStore = defineStore("ufpStore", () => {
   // 定义五个响应式值
@@ -9,6 +9,7 @@ export const useUfpStore = defineStore("ufpStore", () => {
   const ILF = ref<number>(0);
   const EIF = ref<number>(0);
   const UFP = ref<number>(0);
+
   // 计算属性：计算总和（可选）
   const total = computed(() => EO.value + EI.value + EQ.value + ILF.value + EIF.value);
 
@@ -30,7 +31,7 @@ export const useUfpStore = defineStore("ufpStore", () => {
   };
   const setUFP = (value: number) => {
     UFP.value = value;
-  };  
+  };
 
   // 导出 state 和方法
   return {
@@ -48,4 +49,8 @@ export const useUfpStore = defineStore("ufpStore", () => {
     setEIF,
     setUFP
   };
+}, {
+  persist: {
+    storage: window.localStorage, // 持久化到 localStorage
+  },
 });
