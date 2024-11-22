@@ -53,6 +53,12 @@ const breadcrumbs = computed(() => {
       case "project":
         text = "项目管理";
         break;
+      case "pdrscreen":
+        text = "团队PDR分析";
+        break;
+      case "citycost":
+        text = "城市成本分布地图";
+        break;
       // 添加其他路由的自定义中文名称
       default:
         text = path;
