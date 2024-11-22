@@ -1,82 +1,82 @@
 <template>
-        <!-- 粒子背景组件 -->
-  <vue-particles id="tsparticles" @particles-loaded="particlesLoaded" url="http://foo.bar/particles.json" />
+          <!-- 粒子背景组件 -->
+   <vue-particles id="tsparticles" @particles-loaded="particlesLoaded" url="http://foo.bar/particles.json" />
 
-  <vue-particles
-      id="tsparticles"
-      @particles-loaded="particlesLoaded"
-      :options="{
-        background: {
-          color: {
-            value: '#f2f2f2',
-          },
+    <vue-particles
+    id="tsparticles"
+    @particles-loaded="particlesLoaded"
+    :options="{
+      background: {
+        color: {
+          value: '#f2f2f2',
         },
-        fpsLimit: 120,
-        interactivity: {
-          events: {
-            onClick: {
-              enable: true,
-              mode: 'push',
-            },
-            onHover: {
-              enable: true,
-              mode: 'repulse',
-            },
-          },
-          modes: {
-            bubble: {
-              distance: 400,
-              duration: 2,
-              opacity: 0.8,
-              size: 40,
-            },
-            push: {
-              quantity: 4,
-            },
-            repulse: {
-              distance: 200,
-              duration: 0.4,
-            },
-          },
-        },
-        particles: {
-          color: {
-            value: '#D3D3D3',
-          },
-          links: {
-            color: '#D3D3D3',
-            distance: 150,
+      },
+      fpsLimit: 120,
+      interactivity: {
+        events: {
+          onClick: {
             enable: true,
-            opacity: 0.5,
-            width: 1,
+            mode: 'push',
           },
-          move: {
-            direction: 'none',
+          onHover: {
             enable: true,
-            outModes: 'bounce',
-            random: false,
-            speed: 6,
-            straight: false,
-          },
-          number: {
-            density: {
-              enable: true,
-            },
-            value: 60,
-          },
-          opacity: {
-            value: 0.5,
-          },
-          shape: {
-            type: 'circle',
-          },
-          size: {
-            value: { min: 1, max: 5 },
+            mode: 'repulse',
           },
         },
-        detectRetina: true,
-      }"
-  />
+        modes: {
+          bubble: {
+            distance: 400,
+            duration: 2,
+            opacity: 0.8,
+            size: 40,
+          },
+          push: {
+            quantity: 4,
+          },
+          repulse: {
+            distance: 200,
+            duration: 0.4,
+          },
+        },
+      },
+      particles: {
+        color: {
+          value: '#D3D3D3',
+        },
+        links: {
+          color: '#D3D3D3',
+          distance: 150,
+          enable: true,
+          opacity: 0.5,
+          width: 1,
+        },
+        move: {
+          direction: 'none',
+          enable: true,
+          outModes: 'bounce',
+          random: false,
+          speed: 6,
+          straight: false,
+        },
+        number: {
+          density: {
+            enable: true,
+          },
+          value: 60,
+        },
+        opacity: {
+          value: 0.5,
+        },
+        shape: {
+          type: 'circle',
+        },
+        size: {
+          value: { min: 1, max: 5 },
+        },
+      },
+      detectRetina: true,
+    }"
+/>
   <div class="bg-white min-h-screen w-screen relative">
     <!-- 搜索区域 -->
     <div
@@ -84,8 +84,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: 20px;
         /* margin-bottom: 1.5rem; */
+        margin-top: 20px;
       "
     >
       <el-input
@@ -295,7 +295,13 @@
         <span class="text-lg font-semibold" style="margin: 0 1rem"
           >第 {{ pageNum }} 页</span
         >
-        <el-button @click="nextPage" type="primary" plain size="mini" :disabled="pageNum === maxPage">
+        <el-button
+          @click="nextPage"
+          type="primary"
+          plain
+          size="mini"
+          :disabled="pageNum === maxPage"
+        >
           下一页
         </el-button>
       </div>
@@ -525,120 +531,118 @@
       v-model="showHistory"
       class="history-view-dialog"
       :modal-class="'custom-modal-class'"
-      width="800px"
+      width="1400px"
     >
       <el-tabs v-model="activeTab" type="card" class="history-tabs">
         <el-tab-pane name="workload" label="工作量历史">
-          <div class="table-scroll-container">
-            <el-table
-              :data="historyWorkloads"
-              stripe
-              highlight-current-row
-              height="400"
-              class="history-table"
-              :row-class-name="tableRowClassName"
-            >
-              <el-table-column
-                prop="projName"
-                label="项目名称"
-                min-width="180"
-                fixed
+          <div class="content-container">
+            <div class="table-scroll-container">
+              <el-table
+                :data="historyWorkloads"
+                stripe
+                highlight-current-row
+                height="400"
+                class="history-table"
+                :row-class-name="tableRowClassName"
               >
-                <template #default="{ row }">
-                  <div class="project-name-cell">
-                    <i class="el-icon-document"></i>
-                    {{ row.projName }}
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="ae"
-                label="工作量/人时"
-                sortable
-                align="right"
-                width="150"
-              >
-                <template #default="{ row }">
-                  <span class="workload-cell">
-                    {{ row.ae.toLocaleString() }}
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="date"
-                label="记录ID"
-                width="120"
-                align="center"
-              >
-                <template #default="{ row }">
-                  {{ row.id || "-" }}
-                </template>
-              </el-table-column>
-              <!-- <el-table-column label="操作" width="100" fixed="right" align="center">
-                <template #default="{ row }">
-                  <el-button type="text" size="small" @click="viewWorkloadDetails(row)">
-                    详情
-                  </el-button>
-                </template>
-              </el-table-column> -->
-            </el-table>
+                <el-table-column
+                  prop="projName"
+                  label="项目名称"
+                  min-width="120"
+                  fixed
+                >
+                  <template #default="{ row }">
+                    <div class="project-name-cell">
+                      <i class="el-icon-document"></i>
+                      {{ row.projName }}
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="ae"
+                  label="工作量/人时"
+                  sortable
+                  align="right"
+                  width="150"
+                >
+                  <template #default="{ row }">
+                    <span class="workload-cell">
+                      {{ row.ae.toLocaleString() }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="date"
+                  label="记录ID"
+                  width="120"
+                  align="center"
+                >
+                  <template #default="{ row }">
+                    {{ row.id || "-" }}
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <div
+              id="workloadChart"
+              style="width: 100%; height: 400px; margin-top: 20px"
+            ></div>
           </div>
         </el-tab-pane>
 
         <el-tab-pane name="cost" label="造价历史">
-          <div class="table-scroll-container">
-            <el-table
-              :data="historyCosts"
-              stripe
-              highlight-current-row
-              height="400"
-              class="history-table"
-              :row-class-name="tableRowClassName"
-            >
-              <el-table-column
-                prop="projname"
-                label="项目名称"
-                min-width="180"
-                fixed
+          <div class="content-container">
+            <div class="table-scroll-container">
+              <el-table
+                :data="historyCosts"
+                stripe
+                highlight-current-row
+                height="400"
+                class="history-table"
+                :row-class-name="tableRowClassName"
               >
-                <template #default="{ row }">
-                  <div class="project-name-cell">
-                    <i class="el-icon-coin"></i>
-                    {{ row.projname }}
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="esdc"
-                label="综合造价 (¥)"
-                sortable
-                align="right"
-                width="150"
-              >
-                <template #default="{ row }">
-                  <span class="cost-cell">
-                    ¥ {{ row.esdc.toLocaleString() }}
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="date"
-                label="记录ID"
-                width="120"
-                align="center"
-              >
-                <template #default="{ row }">
-                  {{ row.id || "-" }}
-                </template>
-              </el-table-column>
-              <!-- <el-table-column label="操作" width="100" fixed="right" align="center">
-                <template #default="{ row }">
-                  <el-button type="text" size="small" @click="viewCostDetails(row)">
-                    详情
-                  </el-button>
-                </template>
-              </el-table-column> -->
-            </el-table>
+                <el-table-column
+                  prop="projname"
+                  label="项目名称"
+                  min-width="180"
+                  fixed
+                >
+                  <template #default="{ row }">
+                    <div class="project-name-cell">
+                      <i class="el-icon-coin"></i>
+                      {{ row.projname }}
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="esdc"
+                  label="综合造价 (¥)"
+                  sortable
+                  align="right"
+                  width="150"
+                >
+                  <template #default="{ row }">
+                    <span class="cost-cell">
+                      ¥ {{ row.esdc.toLocaleString() }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="date"
+                  label="记录ID"
+                  width="120"
+                  align="center"
+                >
+                  <template #default="{ row }">
+                    {{ row.id || "-" }}
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <div
+              id="costChart"
+              style="width: 100%; height: 400px; margin-top: 20px"
+            ></div>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -674,8 +678,21 @@ import {
   ElTabPane,
 } from "element-plus";
 import "element-plus/dist/index.css";
-
+import * as echarts from "echarts";
 export default {
+  watch: {
+    activeTab(newTab) {
+      if (newTab === "cost") {
+        this.$nextTick(() => {
+          this.renderCostChart(); // 切换到造价历史时重新渲染图表
+        });
+      } else if (newTab === "workload") {
+        this.$nextTick(() => {
+          this.renderWorkloadChart(); // 确保工作量历史的图表正常显示
+        });
+      }
+    },
+  },
   name: "PriceEvaluation",
   components: {
     ElMain,
@@ -836,6 +853,9 @@ export default {
         this.resetSearch();
       }
     },
+    particlesLoaded(){
+    console.log("Particles container loaded", container);
+    },
     resetSearch() {
       this.searchTerm = "";
       this.pageNum = 1;
@@ -958,6 +978,66 @@ export default {
         alert("造价评估提交失败");
       }
     },
+    // 渲染工作量图表
+    renderWorkloadChart() {
+      this.$nextTick(() => {
+        const chartDom = document.getElementById("workloadChart");
+        if (chartDom) {
+          const myChart = echarts.init(chartDom);
+          const option = {
+            xAxis: {
+              type: "category",
+              data: this.historyWorkloads.map((item) => item.id), // 使用 id 作为 x 轴
+            },
+            yAxis: {
+              type: "value",
+            },
+            series: [
+              {
+                data: this.historyWorkloads.map((item) => item.ae), // 使用 ae 作为 y 轴
+                type: "bar",
+              },
+            ],
+          };
+          myChart.setOption(option);
+        } else {
+          console.error("工作量图表的 DOM 元素未找到");
+        }
+      });
+    },
+
+    // 渲染费用图表
+    renderCostChart() {
+      this.$nextTick(() => {
+        const chartDom = document.getElementById("costChart");
+        if (chartDom) {
+          // 销毁已有实例，避免重复初始化
+          const existingInstance = echarts.getInstanceByDom(chartDom);
+          if (existingInstance) {
+            echarts.dispose(chartDom);
+          }
+          const myChart = echarts.init(chartDom);
+          const option = {
+            xAxis: {
+              type: "category",
+              data: this.historyCosts.map((item) => item.id), // 使用 id 作为 x 轴
+            },
+            yAxis: {
+              type: "value",
+            },
+            series: [
+              {
+                data: this.historyCosts.map((item) => item.esdc), // 使用 esdc 作为 y 轴
+                type: "bar",
+              },
+            ],
+          };
+          myChart.setOption(option);
+        } else {
+          console.error("费用图表的 DOM 元素未找到");
+        }
+      });
+    },
     async fetchHistoryWorkloads(id) {
       try {
         const response = await fetch(
@@ -966,6 +1046,7 @@ export default {
         const data = await response.json();
         if (data.isok) {
           this.historyWorkloads = data.aes;
+          this.renderWorkloadChart(); // 渲染第一个直方图
         }
       } catch (error) {
         console.error("Error fetching history workloads:", error);
@@ -979,6 +1060,7 @@ export default {
         const data = await response.json();
         if (data.isok) {
           this.historyCosts = data.esdcs;
+          this.renderCostChart(); // 渲染第二个直方图
         }
       } catch (error) {
         console.error("Error fetching history costs:", error);
@@ -997,9 +1079,9 @@ export default {
     nextPage() {
       this.fetchMaxPage();
       if (this.pageNum < this.maxPage) {
-    this.pageNum++;
-    this.fetchProjects();
-  }
+        this.pageNum++;
+        this.fetchProjects();
+      }
     },
     prevPage() {
       this.fetchMaxPage();
@@ -1011,9 +1093,6 @@ export default {
     downloadProject(url) {
       window.open(url, "_blank");
     },
-  },
-  particlesLoaded(){
-    console.log("Particles container loaded", container);
   },
   mounted() {
     this.fetchMaxPage();
@@ -1071,9 +1150,8 @@ export default {
 .form-item-center .el-form-item__content {
   flex: none;
 }
-/* //z-index: 1001 */
+
 .workload-assessment-dialog {
-  z-index: 2000; /* 设置更高的 z-index 值 */
   .workload-form {
     padding: 20px;
     background-color: #f7f7f7;
@@ -1349,6 +1427,7 @@ export default {
 .history-view-dialog {
   .table-scroll-container {
     max-height: 450px;
+    min-width: 600px;
     overflow-y: auto;
     border-radius: 8px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
@@ -1386,6 +1465,12 @@ export default {
 
   .close-btn {
     margin-left: 15px;
+  }
+
+  .content-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
   }
 }
 </style>

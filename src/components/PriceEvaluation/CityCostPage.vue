@@ -202,10 +202,10 @@ export default {
 
       console.log("Min:", min, "Max:", max);
 
-      if (isNaN(min) || isNaN(max)) {
-        console.error("Min 或 Max 值无效");
-        return;
-      }
+      if (!values.length || isNaN(min) || isNaN(max)) {
+  console.error("有效值为空或 Min/Max 无效");
+  return;
+}
 
       // 图表配置
       const option = {
@@ -220,19 +220,23 @@ export default {
             color: ["#e0f3f8", "#fee090", "#f46d43", "#a50026"],
           },
           text: ["高", "低"],
-          calculable: true,
+          calculable: false,
         },
         series: [
-          {
-            name: "城市成本",
-            type: "map",
-            map: "china",
-            roam: true,
-            label: {
-              show: true,
-            },
-            data: cityData,
-          },
+        this.isMapMode
+    ? {
+        name: "城市成本",
+        type: "map", // 确保 type 为 'map'
+        map: "china",
+        roam: true,
+        label: { show: true },
+        data: cityData, // 确保 data 不为空
+      }
+    : {
+        name: "城市成本",
+        type: "bar", // 确保 type 为 'bar'
+        data: cityData.map((d) => d.value), // 确保 data 不为空
+      },
         ],
       };
 
@@ -241,6 +245,26 @@ export default {
         // 地图模式下隐藏坐标轴
         option.xAxis = { show: false };
         option.yAxis = { show: false };
+        option.series = [
+    {
+      name: "城市成本",
+      type: "map",
+      map: "china",
+      roam: true,
+      label: { show: true },
+      data: cityData,
+    },
+  ];
+  option.visualMap = {
+    left: "right",
+    min: min,
+    max: max,
+    inRange: {
+      color: ["#e0f3f8", "#fee090", "#f46d43", "#a50026"],
+    },
+    text: ["高", "低"],
+    calculable: false,
+  };
       } else {
         // 直方图模式下显示坐标轴
         option.xAxis = {
@@ -261,7 +285,7 @@ export default {
 
       // 加载地理数据并注册地图
       fetch(
-        "https://raw.githubusercontent.com/lyhmyd1211/GeoMapData_CN/master/china.json"
+        "/china.json"
       )
         .then((res) => res.json())
         .then((geoJson) => {
