@@ -81,7 +81,7 @@
 <el-dialog
   title="预测PDR结果"
   v-model="predictDialogVisible"
-  :style="{ width: '700px', height: '500px' }"
+  width="700px"
   :before-close="handleClose"
 >
   <!-- 顶部区域 - 标题部分 -->
@@ -354,15 +354,6 @@ export default {
             type: 'bar', // 确保 type 属性存在且正确
           },
         ],
-        grid: {
-          left: '10%',   // 控制图表左边的空白区域
-          right: '10%',  // 控制图表右边的空白区域
-          bottom: '15%', // 控制图表下边的空白区域
-          top: '20%',    // 控制图表上边的空白区域
-        },
-        // 可选，调整图表的宽度和高度（图表容器的设置）
-        width: '80%',  // 控制图表的宽度，适应父容器
-        height: '400px', // 控制图表的高度
       };
       break;
     case 'line':
@@ -387,12 +378,6 @@ export default {
             smooth: true,
           },
         ],
-        grid: {
-          left: '10%',
-          right: '10%',
-          bottom: '15%',
-          top: '20%',
-        },
       };
       break;
     case 'pie':
@@ -429,7 +414,6 @@ export default {
       console.error('未知的图表类型');
       return;
   }
-
 
   // 设置选项并刷新图表
   this.predictChartInstance.setOption(option);
