@@ -43,7 +43,7 @@
         <el-icon><DataAnalysis /></el-icon>团队PDR分析
       </el-menu-item>
       <el-menu-item index="3-3" @click="cityCost">
-        <el-icon><DataAnalysis /></el-icon>城市成本分布地图
+        <el-icon><MapLocation /></el-icon>城市成本分布地图
       </el-menu-item>
 
     </el-sub-menu>
