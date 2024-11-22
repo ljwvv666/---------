@@ -42,6 +42,9 @@
       <el-menu-item index="3-2" @click="analyseCost">
         <el-icon><DataAnalysis /></el-icon>团队PDR分析
       </el-menu-item>
+      <el-menu-item index="3-3" @click="cityCost">
+        <el-icon><DataAnalysis /></el-icon>城市成本分布地图
+      </el-menu-item>
 
     </el-sub-menu>
     
@@ -84,6 +87,10 @@ const project = () => {
   router.push('/index/project');
 }
 
+
+const cityCost = () => {
+  router.push('/index/citycost');
+}
 
 </script>
 

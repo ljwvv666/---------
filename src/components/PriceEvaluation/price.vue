@@ -1,18 +1,90 @@
 <template>
-  <div class="bg-white min-h-screen w-screen relative">
-    <!-- 粒子背景组件 -->
-    <vue-particles
+        <!-- 粒子背景组件 -->
+  <vue-particles id="tsparticles" @particles-loaded="particlesLoaded" url="http://foo.bar/particles.json" />
+
+  <vue-particles
       id="tsparticles"
-      :options="particlesOptions"
-      class="particles-bg"
-    ></vue-particles>
+      @particles-loaded="particlesLoaded"
+      :options="{
+        background: {
+          color: {
+            value: '#f2f2f2',
+          },
+        },
+        fpsLimit: 120,
+        interactivity: {
+          events: {
+            onClick: {
+              enable: true,
+              mode: 'push',
+            },
+            onHover: {
+              enable: true,
+              mode: 'repulse',
+            },
+          },
+          modes: {
+            bubble: {
+              distance: 400,
+              duration: 2,
+              opacity: 0.8,
+              size: 40,
+            },
+            push: {
+              quantity: 4,
+            },
+            repulse: {
+              distance: 200,
+              duration: 0.4,
+            },
+          },
+        },
+        particles: {
+          color: {
+            value: '#D3D3D3',
+          },
+          links: {
+            color: '#D3D3D3',
+            distance: 150,
+            enable: true,
+            opacity: 0.5,
+            width: 1,
+          },
+          move: {
+            direction: 'none',
+            enable: true,
+            outModes: 'bounce',
+            random: false,
+            speed: 6,
+            straight: false,
+          },
+          number: {
+            density: {
+              enable: true,
+            },
+            value: 60,
+          },
+          opacity: {
+            value: 0.5,
+          },
+          shape: {
+            type: 'circle',
+          },
+          size: {
+            value: { min: 1, max: 5 },
+          },
+        },
+        detectRetina: true,
+      }"
+  />
+  <div class="bg-white min-h-screen w-screen relative">
     <!-- 搜索区域 -->
     <div
       style="
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: 20px
+        margin-top: 20px;
         /* margin-bottom: 1.5rem; */
       "
     >
@@ -401,12 +473,12 @@
               <el-option-group label="城市列表">
                 <el-option
                   v-for="city in citiesList"
-                  :key="city"
-                  :label="city"
-                  :value="city"
+                  :key="city.cityname"
+                  :label="city.cityname"
+                  :value="city.cityname"
                 >
                   <div class="select-option">
-                    <span>{{ city }}</span>
+                    <span>{{ city.cityname }}</span>
                   </div>
                 </el-option>
               </el-option-group>
@@ -689,79 +761,8 @@ export default {
           value: "低",
           label: "低",
           description: "风险较小，管理难度低",
-        }
+        },
       ],
-      particlesOptions: {
-        background: {
-          color: {
-            value: '#FFFAFA',
-          },
-        },
-        fpsLimit: 120,
-        interactivity: {
-          events: {
-            onClick: {
-              enable: true,
-              mode: 'push',
-            },
-            onHover: {
-              enable: true,
-              mode: 'repulse',
-            },
-          },
-          modes: {
-            bubble: {
-              distance: 400,
-              duration: 2,
-              opacity: 0.8,
-              size: 40,
-            },
-            push: {
-              quantity: 4,
-            },
-            repulse: {
-              distance: 200,
-              duration: 0.4,
-            },
-          },
-        },
-        particles: {
-          color: {
-            value: '#D3D3D3',
-          },
-          links: {
-            color: '#D3D3D3',
-            distance: 150,
-            enable: true,
-            opacity: 0.5,
-            width: 1,
-          },
-          move: {
-            direction: 'none',
-            enable: true,
-            outModes: 'bounce',
-            random: false,
-            speed: 6,
-            straight: false,
-          },
-          number: {
-            density: {
-              enable: true,
-            },
-            value: 60,
-          },
-          opacity: {
-            value: 0.5,
-          },
-          shape: {
-            type: 'circle',
-          },
-          size: {
-            value: { min: 1, max: 5 },
-          },
-        },
-        detectRetina: true,
-      },
     };
   },
   methods: {
@@ -1011,6 +1012,9 @@ export default {
       window.open(url, "_blank");
     },
   },
+  particlesLoaded(){
+    console.log("Particles container loaded", container);
+  },
   mounted() {
     this.fetchMaxPage();
     this.fetchProjects();
@@ -1019,7 +1023,6 @@ export default {
 </script>
 
 <style>
-
 .bg-white {
   position: relative;
   z-index: 1;
@@ -1382,15 +1385,6 @@ export default {
 
   .close-btn {
     margin-left: 15px;
-  }
-
-  .particles-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -100; /* 确保粒子背景在底层 */
   }
 }
 </style>

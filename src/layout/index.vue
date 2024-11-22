@@ -86,7 +86,7 @@ onMounted(() => {
 
   // 路由变化监听
   router.beforeEach((to, from, next) => {
-    addTag(to.meta.title || to.name || to.path, to.path);
+    addTag(to.name, to.path);
     next();
   });
 });

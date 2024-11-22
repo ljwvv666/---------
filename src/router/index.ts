@@ -50,6 +50,11 @@ const router = createRouter({
           component: () => import('@/components/PriceEvaluation/pdrscreen.vue'),
         },
         {
+          path:'citycost',
+          name:'城市成本分布地图',
+          component: () => import('@/components/PriceEvaluation/CityCostPage.vue'),
+        },
+        {
           path:'project',
           name:'项目管理',
           component: () => import('@/components/Management/ProjectManagement.vue'),
