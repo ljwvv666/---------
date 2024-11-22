@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from "vue-router";
+import FunctionalPoint from "./components/functionalPointAnalysis/functionalPoint.vue";
+
 </script>
 
 <template>
   <router-view />
   <div id="app">
+    <FunctionalPoint></FunctionalPoint>
+
   </div>
 </template>
 
