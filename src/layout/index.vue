@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <el-container class="app-wrapper" style="width: 100vw">
+  <el-container class="app-wrapper" style="width: 100vw;">
     <el-header class="header" height="150px">
       <Header />
     </el-header>
@@ -134,7 +134,8 @@ html, body, .app-wrapper {
   padding-left: 10px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05); /* 添加阴影效果 */
   border-radius: 3px; /* 设置圆角 */
-  width: 100vw; /* 自适应宽度 */
+  width: 100%; /* 自适应宽度 */
+  overflow: hidden;
 }
 .tag-item {
   margin: 3px;
@@ -170,6 +171,7 @@ html, body, .app-wrapper {
   display: flex;
   align-items: center;
   padding: 1px;
+  width: 100%;
   background: #f5f5f5;
   border-bottom: 2px solid #ddd;
   z-index: 1000;
