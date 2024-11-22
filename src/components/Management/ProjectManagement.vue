@@ -98,7 +98,8 @@
 
 <script setup>
 import { ref } from "vue";
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const searchQuery = ref({
   userName: "",
   status: "",
@@ -141,7 +142,7 @@ const resetSearch = () => {
 };
 
 const gotoFP = () => {
-  console.log("开始评估");
+  router.push('/index/uploadFile')
 };
 </script>
 
