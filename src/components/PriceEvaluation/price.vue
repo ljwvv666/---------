@@ -531,7 +531,7 @@
       v-model="showHistory"
       class="history-view-dialog"
       :modal-class="'custom-modal-class'"
-      width="1400px"
+      width="1200px"
     >
       <el-tabs v-model="activeTab" type="card" class="history-tabs">
         <el-tab-pane name="workload" label="工作量历史">
@@ -1326,6 +1326,7 @@ export default {
 }
 
 .history-view-dialog {
+  transform: translateX(100px); /* 向右移动100px */
   .history-tabs {
     ::v-deep .el-tabs__header {
       margin-bottom: 20px;
