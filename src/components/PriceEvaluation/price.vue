@@ -1071,8 +1071,9 @@ export default {
 .form-item-center .el-form-item__content {
   flex: none;
 }
-
+/* //z-index: 1001 */
 .workload-assessment-dialog {
+  z-index: 2000; /* 设置更高的 z-index 值 */
   .workload-form {
     padding: 20px;
     background-color: #f7f7f7;
