@@ -156,7 +156,7 @@ html, body, .app-wrapper {
 .main {
   margin-left: 210px; /* 为固定的 Sidebar 腾出空间 */
   background-color: #f2f2f2;
-  padding: 8px;
+  padding: 0px;
   height: calc(100vh - 60px); /* 确保占满剩余高度 */
   box-sizing: border-box; /* 确保 padding 不影响布局 */
   display: flex;
@@ -191,6 +191,7 @@ html, body, .app-wrapper {
 }
 .tag-item {
   margin: 3px;
+  margin-top: 8px;
 }
 .tags-view-item {
   display: inline-flex;

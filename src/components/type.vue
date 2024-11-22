@@ -45,6 +45,7 @@
     color: #333; /* 字体颜色 */
     line-height: 5; /* 行高 */
     z-index: 100;
+    margin-left: 40px;
   }
   
   .typed-content {

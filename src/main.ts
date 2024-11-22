@@ -3,7 +3,7 @@ import './assets/main.css';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
-
+import FunctionalPoint from './components/functionalPointAnalysis/functionalPoint.vue';
 import App from './App.vue';
 import router from './router';
 import ElementPlus from 'element-plus';
@@ -35,6 +35,6 @@ app.use(Particles, {
     await loadSlim(engine); // or you can load the slim version from "@tsparticles/slim" if don't need Shapes or Animations
   },
 });
-
+app.component('FunctionalPoint',FunctionalPoint)
 // 挂载根组件
 app.mount('#app');

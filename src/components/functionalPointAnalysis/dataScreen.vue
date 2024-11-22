@@ -246,6 +246,8 @@ import { useSystemStore } from '@/stores/systemStore';
 import { useUfpStore } from "@/stores/ufpClass";
 import { ElMessage } from "element-plus";
 
+import { watch } from "vue";
+
 const dialogTable1Visible = ref(false);
 const dialogTable2Visible = ref(false)
 const systemStore = useSystemStore();
@@ -253,6 +255,20 @@ const ufpStore = useUfpStore();
 
 const options = ref<{ label: string; value: string }[]>([]); // 下拉候选项
 const value = ref<string | null>(null); // 绑定的选中值
+
+
+// 监听 UFP 的变化
+watch(
+  () => ufpStore.UFP, // 确保这里返回的是响应式引用
+  async (newValue, oldValue) => {
+    console.log(`UFP 值发生变化：从 ${oldValue} 到 ${newValue}`);
+    if (newValue !== oldValue) {
+      await updateGSC(); // 调用更新 GSC 数据方法
+      await updateScale(); // 调用更新规模因子调整方法
+    }
+  }
+);
+
 
 
 // 明确指定 gscTableData 的类型
@@ -410,7 +426,6 @@ const fetchDIFromModel = async () => {
   }
 };
 
-
 //规模变更因子
 
 const scaleTableData = ref<{ stage: string; factor: number }[]>([]); // 表格数据
@@ -502,6 +517,9 @@ const updateScale = async () => {
 
 // 在组件挂载时获取数据
 onMounted(() => {
+  
+  updateGSC(); 
+  updateScale();
   fetchData();
   fetchOptions();
   if (systemStore.standardName) {
@@ -575,6 +593,7 @@ const tableData: Product[] = [
     amount: ufpStore.EIF,
 },
 ]
+
 </script>
   
 <style scoped>

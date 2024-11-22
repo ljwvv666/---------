@@ -35,14 +35,19 @@
           />
         </el-form-item>
       </el-col>
-       <!-- 搜索和重置按钮 -->
-       <el-col :span="1">
+      <!-- 搜索和重置按钮 -->
+      <el-col :span="1">
         <el-button type="primary" @click="searchUser">
           <el-icon><Search /></el-icon>搜索
         </el-button>
       </el-col>
       <el-col :span="1">
-        <el-button @click="resetSearch" icon="Refresh" type="default" style="margin-left: 30px;">
+        <el-button
+          @click="resetSearch"
+          icon="Refresh"
+          type="default"
+          style="margin-left: 30px;"
+        >
           重置
         </el-button>
       </el-col>
@@ -51,7 +56,7 @@
 
   <!-- 表格区域 -->
   <el-table
-    :data="tableData"
+    :data="filteredData"
     style="width: 1260px; margin-left: 20px; background-color: white;"
     border
   >
@@ -90,28 +95,31 @@
       :background="true"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
-      style="margin-right: 550px;margin-top: 130px;"
-
+      style="margin-right: 550px; margin-top: 130px;"
     />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 const router = useRouter();
+
+// 搜索条件
 const searchQuery = ref({
   userName: "",
   status: "",
   createTime: "",
 });
 
+// 表单状态
 const queryForm = ref({
   pagenum: 1,
   pagesize: 10,
 });
 
-const tableData = ref([
+// 原始数据
+const originalTableData = ref([
   { id: 1, name: "AI 智能分析系统", createdAt: "2024-01-15", status: "正常", leader: "张三", progress: "80%" },
   { id: 2, name: "数据可视化平台", createdAt: "2024-03-10", status: "延期", leader: "李四", progress: "50%" },
   { id: 3, name: "自动化测试工具", createdAt: "2024-05-20", status: "正常", leader: "王五", progress: "95%" },
@@ -124,25 +132,42 @@ const tableData = ref([
   { id: 10, name: "机器学习算法改进", createdAt: "2024-04-22", status: "正常", leader: "王十二", progress: "70%" },
 ]);
 
+// 搜索后的数据
+const filteredData = ref([...originalTableData.value]);
+
+// 状态选项
 const options = [
   { label: "正常", value: "正常" },
   { label: "延期", value: "延期" },
 ];
 
-const total = ref(10);
+const total = ref(filteredData.value.length);
 
+// 搜索功能
 const searchUser = () => {
-  console.log("搜索项目:", searchQuery.value);
+  filteredData.value = originalTableData.value.filter((item) => {
+    const matchesName =
+      !searchQuery.value.userName ||
+      item.name.toLowerCase().includes(searchQuery.value.userName.toLowerCase());
+    const matchesStatus =
+      !searchQuery.value.status || item.status === searchQuery.value.status;
+    return matchesName && matchesStatus;
+  });
+  total.value = filteredData.value.length; // 更新总数
 };
 
+// 重置功能
 const resetSearch = () => {
   searchQuery.value.userName = "";
   searchQuery.value.status = "";
   searchQuery.value.createTime = "";
+  filteredData.value = [...originalTableData.value]; // 恢复原始数据
+  total.value = filteredData.value.length; // 更新总数
 };
 
+// 跳转功能
 const gotoFP = () => {
-  router.push('/index/uploadFile')
+  router.push("/index/uploadFile");
 };
 </script>
 
