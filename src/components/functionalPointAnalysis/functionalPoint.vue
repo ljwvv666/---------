@@ -9,8 +9,9 @@
         border
         show-summary
         ref="allInfoRef"
-        
+        :summary-method="summaryMethod"
       >
+
         <el-table-column width="70" label="序号" >
           <template #default="scope">
             <!-- 判断如果当前行和前一行的子系统名称相同，则不显示 -->
@@ -149,58 +150,80 @@ let tableData = ref([]);
 let departments = ref([]);
 let firm = ref();
 
-// 获取数据并处理
+const summaryMethod = ({ columns, data }) => {
+  const sums = [];
+  
+  // 遍历所有列
+  columns.forEach((column, index) => {
+    // 判断是否为需要计算总和的列 (例如: ufp)
+    if (index === 0) {
+      sums.push('总和'); // 如果是第一列，可以放一个固定标签
+    } else if (index === 1) { 
+      sums.push(ufpStore.EO); // 可以使用动态数据，例如 ufps
+    } else if (index === 2) {
+      sums.push(ufpStore.EI); // 继续根据实际数据处理其他列
+    } else if (index === 3) {
+      sums.push(ufpStore.EQ);
+    } else if (index === 4) {
+      sums.push(ufpStore.ILF);
+    } else if (index === 5) {
+      sums.push(ufpStore.EIF);
+    } else {
+      sums.push(data.reduce((sum, item) => sum + (item[column.property] || 0), 0));
+    }
+  });
+
+  return sums;
+};
+
 const fetchTableData = async () => {
   try {
-    ufpStore.EO=0;
-    ufpStore.EI=0;
-    ufpStore.EQ=0;
-    ufpStore.ILF=0;
-    ufpStore.EIF=0;
-    const response = await axios.get('http://localhost:9000/func/list'); // 替换为实际的接口地址
+    ufpStore.EO = 0;
+    ufpStore.EI = 0;
+    ufpStore.EQ = 0;
+    ufpStore.ILF = 0;
+    ufpStore.EIF = 0;
+    const response = await axios.get('http://localhost:9000/func/list');
     const data = response.data.info;
     
     const sum = ref(0);
     data.forEach(item => {
-      const type = item.type
-      if(type == "EO"){ ufpStore.EO++;}
-      if(type == "EI"){ ufpStore.EI++;}
-      if(type == "EQ"){ ufpStore.EQ++;}
-      if(type == "ILF"){ ufpStore.ILF++;}
-      if(type == "EIF"){ ufpStore.EIF++;}
+      const type = item.type;
+      if(type === "EO"){ ufpStore.EO++; }
+      if(type === "EI"){ ufpStore.EI++; }
+      if(type === "EQ"){ ufpStore.EQ++; }
+      if(type === "ILF"){ ufpStore.ILF++; }
+      if(type === "EIF"){ ufpStore.EIF++; }
       sum.value += item.ufp;
     });
     ufpStore.UFP = sum.value;
-    console.log(ufpStore.UFP)
+    console.log(ufpStore.UFP);
 
-
-    let sequenceNumber = 0; // 序号初始化
-    let previousSubSystem = ''; // 上一个子系统名称
+    let sequenceNumber = 0;
+    let previousSubSystem = '';
     let previousModule = '';
     tableData.value = data.map((item, index) => {
-      sequenceNumber++; // 更新序号
-      // 如果当前子系统名称与上一个子系统名称不同，重新设置序号
+      sequenceNumber++;
       const isFirstInSubSystem = item.subSystem !== previousSubSystem;
       if (isFirstInSubSystem) {
         previousSubSystem = item.subSystem;
       }
-
       const isFirstInModule = item.module !== previousModule;
-      if(isFirstInModule){
+      if (isFirstInModule) {
         previousModule = item.module;
       }
       return {
         ...item,
-        index: sequenceNumber, // 添加序号
-        isFirstInSubSystem, // 是否为该子系统名称的第一次出现
+        index: sequenceNumber,
+        isFirstInSubSystem,
         isFirstInModule,
       };
     });
-
   } catch (error) {
     console.error('Failed to fetch table data:', error);
   }
 };
+
 
 
 async function deleteDtm(fpn: string) {
