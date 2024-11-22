@@ -314,6 +314,7 @@
       class="workload-assessment-dialog"
       :modal-class="'custom-modal-class'"
       width="450px"
+      :append-to-body="true"
     >
       <el-form
         :model="workloadForm"
@@ -532,6 +533,7 @@
       class="history-view-dialog"
       :modal-class="'custom-modal-class'"
       width="1200px"
+      :append-to-body="true"
     >
       <el-tabs v-model="activeTab" type="card" class="history-tabs">
         <el-tab-pane name="workload" label="工作量历史">
